@@ -1,15 +1,16 @@
 package com.codecool.lhel.domain.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
 
-    List<Card> cards;
-    Integer pot;
+    private List<Card> cards;
+    private Integer pot;
 
     public Board() {
-        cards = new ArrayList<>();
         pot = 0;
+        cards = new ArrayList<>();
     }
 
     public List<Card> getCards() {

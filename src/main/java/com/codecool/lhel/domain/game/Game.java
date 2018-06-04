@@ -2,6 +2,7 @@ package com.codecool.lhel.domain.game;
 
 import com.codecool.lhel.domain.enums.Stage;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class Game {
@@ -24,8 +25,10 @@ public class Game {
     }
 
     public void dealHands(){
-        //Iterator deckIterator = deck.getCards().
-        //playerOne.getHand();
+        for (int i = 0; i < 1; i++) {
+            moveCard(deck.getCards(), playerOne.getHand());
+            moveCard(deck.getCards(), playerTwo.getHand());
+        }
     }
 
     public void compareHands(){
