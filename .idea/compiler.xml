@@ -7,7 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="LHEL" />
+        <module name="lhel" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="lhel" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
