@@ -17,6 +17,10 @@ public class Player {
         return hand;
     }
 
+    public void foldHand(){
+        hand = new ArrayList<>();
+    }
+
     public Integer getStack() {
         return stack;
     }

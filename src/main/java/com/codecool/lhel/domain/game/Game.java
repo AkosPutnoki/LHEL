@@ -13,8 +13,26 @@ public class Game {
     private Burner burner;
     private Board board;
     private Player turn;
+    private Player button;
     private Stage stage;
     private Integer raiseCounter;
+
+    public Game(Player playerOne, Player playerTwo) {
+        this.playerOne = playerOne;
+        this.playerTwo = playerTwo;
+        turn = playerOne;
+        button = playerTwo;
+        newRound();
+    }
+
+    private Player changeTurn(){
+        if(turn.equals(playerOne)){
+            turn = playerOne;
+        } else {
+            turn = playerTwo;
+        }
+        return turn;
+    }
 
     private void moveCard(List<Card> listFrom, List<Card> listTo){
 
@@ -25,7 +43,7 @@ public class Game {
     }
 
     public void dealHands(){
-        for (int i = 0; i < 1; i++) {
+        for (int i = 1; i <= 2; i++) {
             moveCard(deck.getCards(), playerOne.getHand());
             moveCard(deck.getCards(), playerTwo.getHand());
         }
@@ -48,6 +66,13 @@ public class Game {
     }
 
     public void newRound(){
-
+        deck = new Deck();
+        playerOne.foldHand();
+        playerTwo.foldHand();
+        burner = new Burner();
+        board = new Board();
+        stage = Stage.PREFLOP;
+        raiseCounter = 0;
+        button = button.equals(playerOne) ? playerTwo : playerOne;
     }
 }
