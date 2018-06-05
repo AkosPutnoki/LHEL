@@ -1,0 +1,11 @@
+# URL of your database
+spring.datasource.url= jdbc:postgresql://localhost:5432/chessicaDB
+
+# Username to access your DB
+spring.datasource.username=randomcodecooler
+
+# Password to access your DB
+spring.datasource.password=nagyonbiztonsagos
+
+# Creates the DB when the app starts, drops everything when the app closes. Good for testing.
+spring.jpa.hibernate.ddl-auto=create-drop

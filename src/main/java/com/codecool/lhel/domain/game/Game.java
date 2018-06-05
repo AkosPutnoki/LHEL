@@ -2,8 +2,8 @@ package com.codecool.lhel.domain.game;
 
 import com.codecool.lhel.domain.enums.Stage;
 
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 public class Game {
 
@@ -50,7 +50,18 @@ public class Game {
     }
 
     public void compareHands(){
+        List<Card> playerOneCardState = board.getCards();
+        playerOneCardState.addAll(playerOne.getHand());
 
+        List<Card> playerTwoCardState = board.getCards();
+        playerTwoCardState.addAll(playerTwo.getHand());
+
+        try {
+            GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState);
+        } catch (IOException e) {
+            //TODO
+            e.printStackTrace();
+        }
     }
 
     public void handleResult(){

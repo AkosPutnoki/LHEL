@@ -20,5 +20,9 @@ public class Card {
     public Suit getSuit() {
         return suit;
     }
-    
+
+    @Override
+    public String toString() {
+        return "" + rank.getValue() + suit.getValue();
+    }
 }
