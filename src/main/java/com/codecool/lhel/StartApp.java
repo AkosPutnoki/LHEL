@@ -19,8 +19,8 @@ public class StartApp {
 
         SpringApplication.run(StartApp.class, args);
 
-//        Card card1 = new Card(Rank.EIGHT, Suit.CLUB);
-//        Card card2 = new Card(Rank.SEVEN, Suit.CLUB);
+//        Card card1 = new Card(Rank.SIX, Suit.SPADE);
+//        Card card2 = new Card(Rank.SIX, Suit.DIAMOND);
 //        Card card3 = new Card(Rank.SIX, Suit.CLUB);
 //        Card card4 = new Card(Rank.SIX, Suit.HEART);
 //        Card card5 = new Card(Rank.DEUCE, Suit.SPADE);

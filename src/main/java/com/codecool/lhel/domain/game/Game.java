@@ -1,6 +1,9 @@
 package com.codecool.lhel.domain.game;
 
+import com.codecool.lhel.domain.enums.Action;
+import com.codecool.lhel.domain.enums.BetSize;
 import com.codecool.lhel.domain.enums.Stage;
+import com.codecool.lhel.domain.exceptions.BadMoveException;
 
 import java.io.IOException;
 import java.util.*;
@@ -16,12 +19,14 @@ public class Game {
     private Player button;
     private Stage stage;
     private Integer raiseCounter;
+    private boolean isOpen;
 
     public Game(Player playerOne, Player playerTwo) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
         turn = playerOne;
         button = playerTwo;
+        isOpen = true;
         newRound();
     }
 
@@ -42,33 +47,71 @@ public class Game {
         listFrom.remove(currentCard);
     }
 
-    public void dealHands(){
+    private void dealHands(){
         for (int i = 1; i <= 2; i++) {
             moveCard(deck.getCards(), playerOne.getHand());
             moveCard(deck.getCards(), playerTwo.getHand());
         }
     }
 
-    public void compareHands(){
+    public void compareHands() throws IOException {
         List<Card> playerOneCardState = board.getCards();
         playerOneCardState.addAll(playerOne.getHand());
 
         List<Card> playerTwoCardState = board.getCards();
         playerTwoCardState.addAll(playerTwo.getHand());
 
-        try {
-            GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState);
-        } catch (IOException e) {
-            //TODO
-            e.printStackTrace();
+        Player winner;
+
+        switch(GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState)) {
+            case 1: winner = playerOne; break;
+            case 2: winner = playerTwo; break;
+            default: winner = null; break;
+        }
+
+        handleResult(winner);
+    }
+
+    private void handleResult(Player winner) throws IOException {
+
+        if(winner != null){
+            winner.increaseStack(board.getPot());
+        } else {
+            playerOne.increaseStack(board.getPot()/2);
+            playerTwo.increaseStack(board.getPot()/2);
+        }
+
+        if(playerOne.getStack() > 0 && playerTwo.getStack() > 0){
+            newRound();
+        } else{
+            isOpen = false;
         }
     }
 
-    public void handleResult(){
-
-    }
-
-    public void handlePlayerAction(){
+    public void handlePlayerAction(Player player, Action action, BetSize betSize) throws IOException {
+        switch(action){
+            case RAISE:
+                    player.decreaseStack(board.getRaise() + betSize.getValue());
+                    board.increasePot(board.getRaise() + betSize.getValue());
+                    board.setRaise(betSize.getValue());
+                    break;
+            case CALL:
+                    player.decreaseStack(board.getRaise());
+                    board.increasePot(board.getRaise());
+                    board.setRaise(0);
+                    break;
+            case CHECK:
+                    if(board.getRaise() != 0){
+                        throw new BadMoveException("Can't check to raise bruhh");
+                    }
+                    break;
+            case FOLD:
+                    if(player.equals(playerOne)){
+                        handleResult(playerTwo);
+                    }else{
+                        handleResult(playerOne);
+                    } break;
+        }
 
     }
 
@@ -76,7 +119,7 @@ public class Game {
 
     }
 
-    public void newRound(){
+    private void newRound(){
         deck = new Deck();
         playerOne.foldHand();
         playerTwo.foldHand();
@@ -85,5 +128,6 @@ public class Game {
         stage = Stage.PREFLOP;
         raiseCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
+        dealHands();
     }
 }

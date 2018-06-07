@@ -10,7 +10,7 @@ public class Player {
 
     public Player() {
         hand = new ArrayList<>();
-        stack = 1000;
+        stack = 10000;
     }
 
     public List<Card> getHand() {
@@ -27,5 +27,13 @@ public class Player {
 
     public void setStack(Integer stack) {
         this.stack = stack;
+    }
+
+    public void increaseStack(Integer pot){
+        this.stack += pot;
+    }
+
+    public void decreaseStack(Integer raise){
+        this.stack -= raise;
     }
 }
