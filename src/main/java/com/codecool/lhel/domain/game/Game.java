@@ -117,38 +117,45 @@ public class Game {
 
     public void handleGameFlow(Player player, Action action) throws IOException {
         if (stage == Stage.PREFLOP){
-            if (button == player){
-                if (action == Action.CHECK){
-                    throw new BadMoveException("Can't check in small blind");
-                } else if (action == Action.CALL){
-                    handlePlayerAction(player, action, BetSize.NO_BET);
-                } else if (action == Action.RAISE){
-                    if (raiseCounter < 4){
-                        handlePlayerAction(player, action, BetSize.SMALL_BET);
-                        raiseCounter++;
-                    } else {
-                        throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
-                    }
-                }
+            if (board.getRaise() != 0){
+               facingRaiseLogic(player, action, BetSize.SMALL_BET);
             } else {
-                if (board.getRaise() == 0){
-                    if (action == Action.CALL){
-                        throw new BadMoveException("Can't call in big blind to small blinds call");
-                    } else if (action == Action.RAISE){
-                        if (raiseCounter < 4){
-                            handlePlayerAction(player, action, BetSize.SMALL_BET);
-                            raiseCounter++;
-                        } else {
-                            throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
-                        }
-                    } else if (action == Action.CHECK){
-                        handlePlayerAction(player, action, BetSize.NO_BET);
-                        stage = Stage.FLOP;
-                    }
-                }
+                facingCallOrCheckLogic(player, action, BetSize.SMALL_BET, Stage.FLOP);
             }
         }
     }
+
+    private void facingRaiseLogic(Player player, Action action, BetSize betSize) throws IOException {
+        if (action == Action.CHECK){
+            throw new BadMoveException("Can't check in small blind");
+        } else if (action == Action.CALL){
+            handlePlayerAction(player, action, BetSize.NO_BET);
+        } else if (action == Action.RAISE){
+            if (raiseCounter < 4){
+                handlePlayerAction(player, action, betSize);
+                raiseCounter++;
+            } else {
+                throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
+            }
+        }
+    }
+
+    private void facingCallOrCheckLogic(Player player, Action action, BetSize betSize, Stage toStage) throws IOException {
+        if (action == Action.CALL){
+            throw new BadMoveException("Can't call to call or check");
+        } else if (action == Action.RAISE){
+            if (raiseCounter < 4){
+                handlePlayerAction(player, action, betSize);
+                raiseCounter++;
+            } else {
+                throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
+            }
+        } else if (action == Action.CHECK){
+            handlePlayerAction(player, action, BetSize.NO_BET);
+            stage = toStage;
+        }
+    }
+
 
     private void newRound(){
         deck = new Deck();
