@@ -19,6 +19,7 @@ public class Game {
     private Player button;
     private Stage stage;
     private Integer raiseCounter;
+    private Integer actionCounter;
     private boolean isOpen;
 
     public Game(Player playerOne, Player playerTwo) {
@@ -39,19 +40,19 @@ public class Game {
         return turn;
     }
 
-    private void moveCard(List<Card> listFrom, List<Card> listTo){
+    private void moveCard(List<Card> listFrom, List<Card> listTo, int repeat){
 
-        Card currentCard = listFrom.get(listFrom.size()-1);
+        for (int i = 0; i < repeat ; i++) {
+            Card currentCard = listFrom.get(listFrom.size()-1);
 
-        listTo.add(currentCard);
-        listFrom.remove(currentCard);
+            listTo.add(currentCard);
+            listFrom.remove(currentCard);
+        }
     }
 
     private void dealHands(){
-        for (int i = 1; i <= 2; i++) {
-            moveCard(deck.getCards(), playerOne.getHand());
-            moveCard(deck.getCards(), playerTwo.getHand());
-        }
+        moveCard(deck.getCards(), playerOne.getHand(), 2);
+        moveCard(deck.getCards(), playerTwo.getHand(), 2);
     }
 
     public void compareHands() throws IOException {
@@ -116,20 +117,51 @@ public class Game {
     }
 
     public void handleGameFlow(Player player, Action action) throws IOException {
-        if (stage == Stage.PREFLOP){
-            if (board.getRaise() != 0){
-               facingRaiseLogic(player, action, BetSize.SMALL_BET);
-            } else {
-                facingCallOrCheckLogic(player, action, BetSize.SMALL_BET, Stage.FLOP);
+        if (player.equals(turn)){
+            dealStreet();
+            switch (stage) {
+                case PREFLOP:
+                    if (board.getRaise() != 0) {
+                        facingRaiseLogic(player, action, BetSize.SMALL_BET, Stage.FLOP);
+                    } else {
+                        facingCallOrCheckLogic(player, action, BetSize.SMALL_BET, Stage.FLOP);
+                    }
+                    break;
+                case FLOP:
+                    if (board.getRaise() != 0) {
+                        facingRaiseLogic(player, action, BetSize.SMALL_BET, Stage.TURN);
+                    } else {
+                        facingCallOrCheckLogic(player, action, BetSize.SMALL_BET, Stage.TURN);
+                    }
+                    break;
+                case TURN:
+                    if (board.getRaise() != 0) {
+                        facingRaiseLogic(player, action, BetSize.BIG_BEET, Stage.RIVER);
+                    } else {
+                        facingCallOrCheckLogic(player, action, BetSize.BIG_BEET, Stage.RIVER);
+                    }
+                    break;
+                case RIVER:
+                    if (board.getRaise() != 0) {
+                        facingRaiseLogic(player, action, BetSize.BIG_BEET, Stage.SHOWDOWN);
+                    } else {
+                        facingCallOrCheckLogic(player, action, BetSize.BIG_BEET, Stage.SHOWDOWN);
+                    }
+                case SHOWDOWN:
+                    compareHands();
             }
+            changeTurn();
         }
     }
 
-    private void facingRaiseLogic(Player player, Action action, BetSize betSize) throws IOException {
+    private void facingRaiseLogic(Player player, Action action, BetSize betSize, Stage toStage) throws IOException {
         if (action == Action.CHECK){
             throw new BadMoveException("Can't check in small blind");
         } else if (action == Action.CALL){
             handlePlayerAction(player, action, BetSize.NO_BET);
+            if (stage != Stage.PREFLOP){
+                stage = toStage;
+            }
         } else if (action == Action.RAISE){
             if (raiseCounter < 4){
                 handlePlayerAction(player, action, betSize);
@@ -152,7 +184,32 @@ public class Game {
             }
         } else if (action == Action.CHECK){
             handlePlayerAction(player, action, BetSize.NO_BET);
-            stage = toStage;
+            if (stage != Stage.PREFLOP){
+                stage = toStage;
+            }
+        }
+    }
+
+    private void dealStreet(){
+        switch (stage){
+            case FLOP:
+                if (board.getCards().size() == 0){
+                    moveCard(deck.getCards(), burner.getCards(), 1);
+                    moveCard(deck.getCards(), board.getCards(), 3);
+                }
+                break;
+            case TURN:
+                if (board.getCards().size() == 3){
+                    moveCard(deck.getCards(), burner.getCards(), 1);
+                    moveCard(deck.getCards(), board.getCards(), 1);
+                }
+                break;
+            case RIVER:
+                if (board.getCards().size() == 4){
+                    moveCard(deck.getCards(), burner.getCards(), 1);
+                    moveCard(deck.getCards(), board.getCards(), 1);
+                }
+                break;
         }
     }
 
@@ -166,6 +223,7 @@ public class Game {
         board.setRaise(BetSize.BIG_BLIND.getValue() - BetSize.SMALL_BLIND.getValue());
         stage = Stage.PREFLOP;
         raiseCounter = 0;
+        actionCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
         dealHands();
     }
