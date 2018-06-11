@@ -115,8 +115,39 @@ public class Game {
 
     }
 
-    public void handleGameFlow(){
-
+    public void handleGameFlow(Player player, Action action) throws IOException {
+        if (stage == Stage.PREFLOP){
+            if (button == player){
+                if (action == Action.CHECK){
+                    throw new BadMoveException("Can't check in small blind");
+                } else if (action == Action.CALL){
+                    handlePlayerAction(player, action, BetSize.NO_BET);
+                } else if (action == Action.RAISE){
+                    if (raiseCounter < 4){
+                        handlePlayerAction(player, action, BetSize.SMALL_BET);
+                        raiseCounter++;
+                    } else {
+                        throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
+                    }
+                }
+            } else {
+                if (board.getRaise() == 0){
+                    if (action == Action.CALL){
+                        throw new BadMoveException("Can't call in big blind to small blinds call");
+                    } else if (action == Action.RAISE){
+                        if (raiseCounter < 4){
+                            handlePlayerAction(player, action, BetSize.SMALL_BET);
+                            raiseCounter++;
+                        } else {
+                            throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
+                        }
+                    } else if (action == Action.CHECK){
+                        handlePlayerAction(player, action, BetSize.NO_BET);
+                        stage = Stage.FLOP;
+                    }
+                }
+            }
+        }
     }
 
     private void newRound(){
@@ -125,6 +156,7 @@ public class Game {
         playerTwo.foldHand();
         burner = new Burner();
         board = new Board();
+        board.setRaise(BetSize.BIG_BLIND.getValue() - BetSize.SMALL_BLIND.getValue());
         stage = Stage.PREFLOP;
         raiseCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
