@@ -1,0 +1,12 @@
+<div>
+  <form #signupForm="ngForm" (ngSubmit)="registration(signupForm)">
+    <h2>Registration</h2>
+    <label>Username:
+      <input name="username" placeholder="Your username" type="text" required>
+    </label>
+    <label>Password:
+      <input name="password" placeholder="Your password" type="password" required>
+    </label>
+    <button type="submit"></button>
+  </form>
+</div>

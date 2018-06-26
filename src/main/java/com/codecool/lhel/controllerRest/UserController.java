@@ -21,11 +21,10 @@ public class UserController {
 
     @PostMapping(value = "/user/registration")
     public String registration(@RequestParam(value = "username") String username,
-                               @RequestParam(value = "email") String email,
                                @RequestParam(value = "password") String password) {
 
         try{
-            User currentUser = userService.registration(username, password, email);
+            User currentUser = userService.registration(username, password);
             session.setAttribute("id", Long.valueOf(currentUser.getId()).intValue());
             session.setAttribute("username", username);
             return "dashboard";

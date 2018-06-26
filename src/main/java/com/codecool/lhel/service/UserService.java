@@ -13,11 +13,11 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public User registration(String username, String password, String email){
-        if (userRepository.getUserByEmail(email) != null || userRepository.getUserByName(username) != null)
+    public User registration(String username, String password){
+        if (userRepository.getUserByName(username) != null)
             throw new FailedDataVerificationException("Registration failed due to existing username/email!");
 
-        User newUser = new User(username, email, BCrypt.hashpw(password, BCrypt.gensalt()));
+        User newUser = new User(username, BCrypt.hashpw(password, BCrypt.gensalt()));
 
         userRepository.save(newUser);
         return newUser;
