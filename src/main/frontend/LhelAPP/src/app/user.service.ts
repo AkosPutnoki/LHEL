@@ -7,11 +7,14 @@ import {User} from "./user";
 })
 export class UserService {
 
-  const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    observe: 'response' as 'response',
+    responseType: 'text' as 'text',
+    withCredentials: true
   };
 
-  private apiURL = 'localhost:/api/user/';
+  private apiURL = 'http://localhost:60001/user/';
 
   constructor(private http: HttpClient) {}
 
@@ -19,9 +22,10 @@ export class UserService {
 
   }
 
-  registration(username: string, password: string){
-    let user = new User(username, password);
+  registration(name: string, password: string){
+    let user = new User(name, password);
     const url = this.apiURL + "registration";
-    this.http.post<User>(url, user, this.httpOptions);
+
+    return this.http.post(url, user, this.httpOptions);
   }
 }

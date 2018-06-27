@@ -1,6 +1,7 @@
 package com.codecool.lhel.domain.userRelated;
 
 import org.hibernate.annotations.Proxy;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class User {
         this.password = password;
     }
 
+
     public User() {
     }
 
@@ -44,10 +46,6 @@ public class User {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -58,6 +56,14 @@ public class User {
 
     public void setMatches(List<Match> matches) {
         this.matches = matches;
+    }
+
+    public static void hashPw(User user) {
+        user.password = BCrypt.hashpw(user.password, BCrypt.gensalt());
+    }
+
+    public static boolean checkPw(User user, String plainText){
+        return BCrypt.checkpw(plainText, user.password);
     }
 
 }
