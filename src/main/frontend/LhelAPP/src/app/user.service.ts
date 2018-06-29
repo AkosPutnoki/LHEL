@@ -18,13 +18,10 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  loginUser(userName: string, password: string){
 
-  }
-
-  registration(name: string, password: string){
+  loginRegistration(name: string, password: string, urlSuffix: string){
     let user = new User(name, password);
-    const url = this.apiURL + "registration";
+    const url = this.apiURL + urlSuffix;
 
     return this.http.post(url, user, this.httpOptions);
   }

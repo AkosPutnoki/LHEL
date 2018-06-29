@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "user_entity")
 @Proxy(lazy=false)
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,13 +21,13 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private List<Match> matches = new ArrayList<>();
 
-    public User(String name, String password) {
+    public UserEntity(String name, String password) {
         this.name = name;
         this.password = password;
     }
 
 
-    public User() {
+    public UserEntity() {
     }
 
     public long getId() {
@@ -50,6 +50,10 @@ public class User {
         this.password = password;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public List<Match> getMatches() {
         return matches;
     }
@@ -58,12 +62,12 @@ public class User {
         this.matches = matches;
     }
 
-    public static void hashPw(User user) {
+    public static void hashPw(UserEntity user) {
         user.password = BCrypt.hashpw(user.password, BCrypt.gensalt());
     }
 
-    public static boolean checkPw(User user, String plainText){
-        return BCrypt.checkpw(plainText, user.password);
+    public static boolean checkPw(UserEntity actualUser, UserEntity promisedUser){
+        return BCrypt.checkpw(promisedUser.password, actualUser.password);
     }
 
 }

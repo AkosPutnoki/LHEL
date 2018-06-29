@@ -1,10 +1,9 @@
 package com.codecool.lhel.service;
 
-import com.codecool.lhel.domain.userRelated.User;
+import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.codecool.lhel.exception.FailedDataVerificationException;
 import com.codecool.lhel.repository.UserRepository;
 import com.google.gson.Gson;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,29 +18,33 @@ public class UserService {
     @Autowired
     private Gson gson;
 
-    public User registration(BufferedReader requestBody){
+    public UserEntity registration(BufferedReader requestBody){
 
-        User newUser = gson.fromJson(requestBody, User.class);
+        UserEntity newUser = gson.fromJson(requestBody, UserEntity.class);
 
         if (userRepository.getUserByName(newUser.getName()) != null)
             throw new FailedDataVerificationException("Registration failed due to existing username!");
 
-        User.hashPw(newUser);
+        UserEntity.hashPw(newUser);
         userRepository.save(newUser);
         return newUser;
     }
 
 
-    public User login(String username, String password){
-        User currentUser = userRepository.getUserByName(username);
-        if(currentUser != null && User.checkPw(currentUser, password)){
-            return currentUser;
+    public UserEntity login(BufferedReader requestBody){
+
+        UserEntity promisedUser = gson.fromJson(requestBody, UserEntity.class);
+        UserEntity actualUser = userRepository.getUserByName(promisedUser.getName());
+
+        if(actualUser != null && UserEntity.checkPw(actualUser, promisedUser)){
+            return actualUser;
         }
         throw new FailedDataVerificationException("Login failed");
 
     }
 
-    public User getUserById(long userId){
+    //TODO: WTF is this?
+    public UserEntity getUserById(long userId){
         return userRepository.findOne(userId);
     }
 }

@@ -1,5 +1,6 @@
 <div>
-  <form #signupForm="ngForm" (ngSubmit)="registration(signupForm)">
+  <form #signupForm="ngForm" (ngSubmit)="loginRegistration(signupForm, 'registration')">
+    <div id="error">{{errorMessage}}</div>
     <h2>Registration</h2>
     <label>Username:
       <input ngModel name="name" placeholder="Your username" type="text" required>
@@ -8,5 +9,15 @@
       <input ngModel name="password" placeholder="Your password" type="password" required>
     </label>
     <button type="submit">Register</button>
+  </form>
+  <form #loginForm="ngForm" (ngSubmit)="loginRegistration(loginForm, 'login')">
+    <h2>Login</h2>
+    <label>Username:
+      <input ngModel name="name" placeholder="Your username" type="text" required>
+    </label>
+    <label>Password:
+      <input ngModel name="password" placeholder="Your password" type="password" required>
+    </label>
+    <button type="submit">Log me in!</button>
   </form>
 </div>

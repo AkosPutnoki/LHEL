@@ -1,4 +1,4 @@
-package com.codecool.lhel.controllerRest;
+package com.codecool.lhel.controllerRest.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

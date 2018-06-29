@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from "../user.service";
 import {NgForm} from "@angular/forms";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login-registration',
@@ -9,16 +10,18 @@ import {NgForm} from "@angular/forms";
 })
 export class LoginRegistrationComponent implements OnInit {
 
-  loggedIn = false;
+  private errorMessage: string = "";
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+              private router: Router) { }
 
   ngOnInit() {
   }
 
-  registration(form: NgForm){
-    this.userService.registration(form.value.name, form.value.password)
-      .subscribe(response => this.loggedIn = response.status == 200);
+  loginRegistration(form: NgForm, urlSuffix: string){
+    this.userService.loginRegistration(form.value.name, form.value.password, urlSuffix)
+      .subscribe(response => this.router.navigateByUrl('/dashboard'),
+                      error => this.errorMessage = error.error);
   }
 
 }

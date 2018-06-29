@@ -22,12 +22,12 @@ public class Match {
 
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @ManyToMany
-    private List<User> users = new ArrayList<>();
+    private List<UserEntity> users = new ArrayList<>();
 
     private ResultType result;
     private byte[] game;
 
-    public Match(User firstUser, User secondUser, byte[] game) {
+    public Match(UserEntity firstUser, UserEntity secondUser, byte[] game) {
         users.add(firstUser);
         users.add(secondUser);
         firstUser.getMatches().add(this);
@@ -47,11 +47,11 @@ public class Match {
         this.id = id;
     }
 
-    public List<User> getUsers() {
+    public List<UserEntity> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<UserEntity> users) {
         this.users = users;
     }
 
