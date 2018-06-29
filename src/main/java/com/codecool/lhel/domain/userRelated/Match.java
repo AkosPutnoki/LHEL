@@ -27,13 +27,22 @@ public class Match {
     private ResultType result;
     private byte[] game;
 
-    public Match(UserEntity firstUser, UserEntity secondUser, byte[] game) {
+    public Match(UserEntity firstUser, UserEntity secondUser) {
         users.add(firstUser);
         users.add(secondUser);
         firstUser.getMatches().add(this);
         secondUser.getMatches().add(this);
-        this.game = game;
         this.result = ResultType.PENDING;
+
+        createGame(firstUser, secondUser);
+    }
+
+    private void createGame(UserEntity firstUser, UserEntity secondUser) {
+        try {
+            this.game = GameSerializer.serialize(new Game(firstUser, secondUser));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Match() {

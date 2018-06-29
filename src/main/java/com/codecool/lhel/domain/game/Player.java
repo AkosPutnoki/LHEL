@@ -1,5 +1,7 @@
 package com.codecool.lhel.domain.game;
 
+import com.codecool.lhel.domain.userRelated.UserEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +9,10 @@ public class Player {
 
     private List<Card> hand;
     private Integer stack;
+    private UserEntity user;
 
-    public Player() {
+    public Player(UserEntity user) {
+        this.user = user;
         hand = new ArrayList<>();
         stack = 10000;
     }

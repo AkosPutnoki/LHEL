@@ -1,22 +1,22 @@
 <div>
-  <form #signupForm="ngForm" (ngSubmit)="loginRegistration(signupForm, 'registration')">
+  <form #signupForm="ngForm" (ngSubmit)="loginRegistration(signupForm, 'registration')" ngNativeValidate>
     <div id="error">{{errorMessage}}</div>
     <h2>Registration</h2>
     <label>Username:
-      <input ngModel name="name" placeholder="Your username" type="text" required>
+      <input ngModel name="name" placeholder="Your username" type="text" required minlength="3" maxlength="10">
     </label>
     <label>Password:
-      <input ngModel name="password" placeholder="Your password" type="password" required>
+      <input ngModel name="password" placeholder="Your password" type="password" required minlength="3" maxlength="10">
     </label>
     <button type="submit">Register</button>
   </form>
-  <form #loginForm="ngForm" (ngSubmit)="loginRegistration(loginForm, 'login')">
+  <form #loginForm="ngForm" (ngSubmit)="loginRegistration(loginForm, 'login')" ngNativeValidate>
     <h2>Login</h2>
     <label>Username:
-      <input ngModel name="name" placeholder="Your username" type="text" required>
+      <input ngModel name="name" placeholder="Your username" type="text" required minlength="3" maxlength="10">
     </label>
     <label>Password:
-      <input ngModel name="password" placeholder="Your password" type="password" required>
+      <input ngModel name="password" placeholder="Your password" type="password" required minlength="3" maxlength="10">
     </label>
     <button type="submit">Log me in!</button>
   </form>

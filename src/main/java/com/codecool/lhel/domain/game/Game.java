@@ -4,6 +4,7 @@ import com.codecool.lhel.domain.enums.Action;
 import com.codecool.lhel.domain.enums.BetSize;
 import com.codecool.lhel.domain.enums.Stage;
 import com.codecool.lhel.domain.exceptions.BadMoveException;
+import com.codecool.lhel.domain.userRelated.UserEntity;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,25 +20,23 @@ public class Game {
     private Player button;
     private Stage stage;
     private Integer raiseCounter;
-    private Integer actionCounter;
     private boolean isOpen;
 
-    public Game(Player playerOne, Player playerTwo) {
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
+    public Game(UserEntity userOne, UserEntity userTwo) {
+        this.playerOne = new Player(userOne);
+        this.playerTwo = new Player(userTwo);
         turn = playerOne;
         button = playerTwo;
         isOpen = true;
         newRound();
     }
 
-    private Player changeTurn(){
+    private void changeTurn(){
         if(turn.equals(playerOne)){
             turn = playerOne;
         } else {
             turn = playerTwo;
         }
-        return turn;
     }
 
     private void moveCard(List<Card> listFrom, List<Card> listTo, int repeat){
@@ -223,7 +222,6 @@ public class Game {
         board.setRaise(BetSize.BIG_BLIND.getValue() - BetSize.SMALL_BLIND.getValue());
         stage = Stage.PREFLOP;
         raiseCounter = 0;
-        actionCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
         dealHands();
     }
