@@ -43,7 +43,6 @@ public class UserService {
 
     }
 
-    //TODO: WTF is this?
     public UserEntity getUserById(long userId) {
         return userRepository.findOne(userId);
     }

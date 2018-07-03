@@ -1,16 +1,19 @@
 package com.codecool.lhel.domain.userRelated;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Proxy;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_entity")
+@Table(name = "`users`")
 @Proxy(lazy=false)
-public class UserEntity {
+public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +21,14 @@ public class UserEntity {
     private String name;
     private String password;
 
-    @ManyToMany(mappedBy = "users")
-    private List<Match> matches = new ArrayList<>();
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    @JsonBackReference
+    private List<Match> matches;
 
     public UserEntity(String name, String password) {
         this.name = name;
         this.password = password;
+        matches = new ArrayList<>();
     }
 
 

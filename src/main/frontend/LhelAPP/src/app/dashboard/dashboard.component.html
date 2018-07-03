@@ -1,1 +1,5 @@
-<button (click)="addPlayerToQueue()">I want to play!</button>
+<button *ngIf="loading===false" (click)="addPlayerToQueue()">I want to play!</button>
+<div *ngIf="loading">
+  <img src="https://zippy.gfycat.com/SkinnySeveralAsianlion.gif" height="100" width="100">
+  <p>Success, please wait for another player!</p>
+</div>

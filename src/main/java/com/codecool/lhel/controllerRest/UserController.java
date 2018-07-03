@@ -31,7 +31,7 @@ public class UserController {
 
         try{
             UserEntity currentUser = userService.registration(request.getReader());
-            session.setAttribute("user", currentUser);
+            session.setAttribute("userId", currentUser.getId());
             return ResponseEntity.ok("Registration succesful!");
         }catch (FailedDataVerificationException | IOException e){
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class UserController {
 
         try{
             UserEntity currentUser = userService.login(request.getReader());
-            session.setAttribute("user", currentUser);
+            session.setAttribute("userId", currentUser.getId());
             return ResponseEntity.ok("Login succesful!");
         }catch (FailedDataVerificationException | IOException e){
             e.printStackTrace();

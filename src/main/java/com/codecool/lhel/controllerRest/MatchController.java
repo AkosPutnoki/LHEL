@@ -40,19 +40,17 @@ public class MatchController {
 
     @PostMapping("match/add-to-queue")
     public ResponseEntity addUserToQueue(){
-        UserEntity currentUser = (UserEntity) session.getAttribute("user");
-        matchService.addUserToQueue(currentUser);
+        //UserEntity currentUser = userService.getUserById((Long) session.getAttribute("userId"));
+        matchService.addUserToQueue((Long) session.getAttribute("userId"));
         Match currentMatch = matchService.createMatch();
         Map<String, Object> JSONMap = new HashMap<>();
 
         if(currentMatch != null){
             JSONMap.put("game", currentMatch.getDeserializedGame());
-
-            Long secondUserId =  currentMatch.getUsers().get(0).equals(currentUser) ? currentMatch.getUsers().get(1).getId() : currentMatch.getUsers().get(0).getId();
+            Long secondUserId =  currentMatch.getUsers().get(0).getId() == ((Long) session.getAttribute("userId")) ? currentMatch.getUsers().get(1).getId() : currentMatch.getUsers().get(0).getId();
             simpMessagingTemplate.convertAndSend("/socket-response/queue/" + secondUserId, JSONMap);
-            //TODO feliratkozni angular oldalon a gamere
         } else{
-            JSONMap.put("userId", currentUser.getId());
+            JSONMap.put("userId", (Long) session.getAttribute("userId"));
         }
 
         return ResponseEntity.ok(JSONMap);

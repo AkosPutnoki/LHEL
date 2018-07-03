@@ -12,22 +12,16 @@ export class SocketHandlerService {
 
   constructor() {  }
 
-  initializeWebSocketConnection(urlSuffix: string){
+  initializeWebSocketConnection(urlSuffix: string, func: any){
     let ws = new SockJS(this.serverUrl);
     this.stompClient = Stomp.over(ws);
     let that = this;
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe("/socket-response" + urlSuffix, (message) => {
-        if(message.body) {
-          $(".chat").append("<div class='message'>"+message.body+"</div>")
-          console.log(message.body);
-        }
-      });
+      that.stompClient.subscribe("/socket-response/" + urlSuffix, (message) => func(message));
     });
   }
 
   sendMessage(message){
     this.stompClient.send("/app/send/message" , {}, message);
-    $('#input').val('');
   }
 }

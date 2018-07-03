@@ -4,18 +4,21 @@ import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements Serializable{
 
-    private List<Card> hand;
-    private Integer stack;
     @JsonIgnore
     private UserEntity user;
+    private String name;
+    private List<Card> hand;
+    private Integer stack;
 
     public Player(UserEntity user) {
         this.user = user;
+        name = user.getName();
         hand = new ArrayList<>();
         stack = 10000;
     }

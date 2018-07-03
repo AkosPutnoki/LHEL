@@ -1,9 +1,10 @@
 package com.codecool.lhel.domain.game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board implements Serializable {
 
     private List<Card> cards;
     private Integer pot;

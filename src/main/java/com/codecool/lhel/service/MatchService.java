@@ -4,7 +4,7 @@ import com.codecool.lhel.domain.game.Game;
 import com.codecool.lhel.domain.userRelated.Match;
 import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.codecool.lhel.repository.MatchRepository;
-import com.codecool.lhel.util.GameSerializer;
+import com.codecool.lhel.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,25 +15,32 @@ import java.util.Queue;
 @Service
 public class MatchService {
 
-    private Queue<UserEntity> users = new LinkedList<>();
+    private Queue<Long> userIds = new LinkedList<>();
 
     @Autowired
     private MatchRepository matchRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    public void addUserToQueue(UserEntity user){
-        if(!users.contains(user))
-            users.add(user);
+
+    public void addUserToQueue(Long userId){
+        if(!userIds.contains(userId))
+            userIds.add(userId);
     }
 
     public int getQueueSize(){
-        return users.size();
+        return userIds.size();
     }
 
 
     public Match createMatch() {
-        if(users.size() >= 2){
-            Match match = new Match(users.poll(), users.poll());
+        if(userIds.size() >= 2){
+            UserEntity userOne = userRepository.findOne(userIds.poll());
+            UserEntity userTwo = userRepository.findOne(userIds.poll());
+
+            Match match = new Match(userOne, userTwo);
+;
             matchRepository.save(match);
             return match;
         }
