@@ -26,35 +26,31 @@ public class UserController {
     @Autowired
     private HttpSession session;
 
-    @PostMapping(value = "/user/registration")
+    @PostMapping("/user/registration")
     public ResponseEntity registration() {
 
-        return loginRegistration("Registration");
-    }
-
-
-    @PostMapping(value = "/user/login")
-    public ResponseEntity login() {
-
-        return loginRegistration("Login");
-
-    }
-
-
-    private ResponseEntity loginRegistration(String methodType){
-
         try{
-            UserEntity currentUser;
-            if(methodType.equals("Registration")){
-                currentUser = userService.registration(request.getReader());
-            } else{
-                currentUser = userService.login(request.getReader());
-            }
+            UserEntity currentUser = userService.registration(request.getReader());
             session.setAttribute("user", currentUser);
-            return ResponseEntity.ok(methodType + " succesful!");
+            return ResponseEntity.ok("Registration succesful!");
         }catch (FailedDataVerificationException | IOException e){
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(methodType + " failed due to bad input. Please try again!");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Registration failed due to bad input. Please try again!");
         }
     }
+
+
+    @PostMapping("/user/login")
+    public ResponseEntity login() {
+
+        try{
+            UserEntity currentUser = userService.login(request.getReader());
+            session.setAttribute("user", currentUser);
+            return ResponseEntity.ok("Login succesful!");
+        }catch (FailedDataVerificationException | IOException e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Login failed due to bad input. Please try again!");
+        }
+    }
+
 }

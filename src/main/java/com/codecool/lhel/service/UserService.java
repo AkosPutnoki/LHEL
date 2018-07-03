@@ -18,7 +18,7 @@ public class UserService {
     @Autowired
     private Gson gson;
 
-    public UserEntity registration(BufferedReader requestBody){
+    public UserEntity registration(BufferedReader requestBody) {
 
         UserEntity newUser = gson.fromJson(requestBody, UserEntity.class);
 
@@ -31,12 +31,12 @@ public class UserService {
     }
 
 
-    public UserEntity login(BufferedReader requestBody){
+    public UserEntity login(BufferedReader requestBody) {
 
         UserEntity promisedUser = gson.fromJson(requestBody, UserEntity.class);
         UserEntity actualUser = userRepository.getUserByName(promisedUser.getName());
 
-        if(actualUser != null && UserEntity.checkPw(actualUser, promisedUser)){
+        if (actualUser != null && UserEntity.checkPw(actualUser, promisedUser)) {
             return actualUser;
         }
         throw new FailedDataVerificationException("Login failed");
@@ -44,7 +44,9 @@ public class UserService {
     }
 
     //TODO: WTF is this?
-    public UserEntity getUserById(long userId){
+    public UserEntity getUserById(long userId) {
         return userRepository.findOne(userId);
     }
+
+
 }

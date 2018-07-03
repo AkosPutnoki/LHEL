@@ -21,14 +21,28 @@ public class Game {
     private Stage stage;
     private Integer raiseCounter;
     private boolean isOpen;
+    private long matchId;
 
-    public Game(UserEntity userOne, UserEntity userTwo) {
+    public Game(UserEntity userOne, UserEntity userTwo, long matchId) {
         this.playerOne = new Player(userOne);
         this.playerTwo = new Player(userTwo);
         turn = playerOne;
         button = playerTwo;
         isOpen = true;
+        this.matchId = matchId;
         newRound();
+    }
+
+    public Player getPlayerOne() {
+        return playerOne;
+    }
+
+    public Player getPlayerTwo() {
+        return playerTwo;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
     }
 
     private void changeTurn(){

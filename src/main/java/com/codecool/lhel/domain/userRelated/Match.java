@@ -39,7 +39,7 @@ public class Match {
 
     private void createGame(UserEntity firstUser, UserEntity secondUser) {
         try {
-            this.game = GameSerializer.serialize(new Game(firstUser, secondUser));
+            this.game = GameSerializer.serialize(new Game(firstUser, secondUser, id));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,8 +68,14 @@ public class Match {
         return game;
     }
 
-    public Game getDeserializedGame() throws IOException {
-        return GameSerializer.deSerialize(game);
+    public Game getDeserializedGame(){
+        try {
+            return GameSerializer.deSerialize(game);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public void setGame(byte[] game) {

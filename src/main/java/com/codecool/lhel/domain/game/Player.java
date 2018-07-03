@@ -1,6 +1,8 @@
 package com.codecool.lhel.domain.game;
 
 import com.codecool.lhel.domain.userRelated.UserEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ public class Player {
 
     private List<Card> hand;
     private Integer stack;
+    @JsonIgnore
     private UserEntity user;
 
     public Player(UserEntity user) {
