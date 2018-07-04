@@ -17,7 +17,7 @@ export class SocketHandlerService {
     this.stompClient = Stomp.over(ws);
     let that = this;
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe("/socket-response/" + urlSuffix, (message) => func(message));
+      that.stompClient.subscribe("/socket-response/" + urlSuffix, (message) => func(JSON.parse(message.body)));
     });
   }
 

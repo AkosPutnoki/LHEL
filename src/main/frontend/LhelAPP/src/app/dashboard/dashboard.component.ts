@@ -25,11 +25,14 @@ export class DashboardComponent implements OnInit {
         this.matchService.subscribeToQueue(response['userId']);
         this.loading = true;
       } else if(response['game']){
-        this.matchService.respondToGameStart(response['game']);
+        this.matchService.getGameFromResponse(response);
       }
     });
   }
 
+  getGame(){
+    return this.matchService.game;
+  }
 
 
 }

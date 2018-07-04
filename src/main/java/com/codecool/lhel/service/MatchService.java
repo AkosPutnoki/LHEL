@@ -34,7 +34,7 @@ public class MatchService {
     }
 
 
-    public Match createMatch() {
+    public synchronized Match createMatch() {
         if(userIds.size() >= 2){
             UserEntity userOne = userRepository.findOne(userIds.poll());
             UserEntity userTwo = userRepository.findOne(userIds.poll());

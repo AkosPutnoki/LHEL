@@ -40,7 +40,6 @@ public class MatchController {
 
     @PostMapping("match/add-to-queue")
     public ResponseEntity addUserToQueue(){
-        //UserEntity currentUser = userService.getUserById((Long) session.getAttribute("userId"));
         matchService.addUserToQueue((Long) session.getAttribute("userId"));
         Match currentMatch = matchService.createMatch();
         Map<String, Object> JSONMap = new HashMap<>();
@@ -49,26 +48,14 @@ public class MatchController {
             JSONMap.put("game", currentMatch.getDeserializedGame());
             Long secondUserId =  currentMatch.getUsers().get(0).getId() == ((Long) session.getAttribute("userId")) ? currentMatch.getUsers().get(1).getId() : currentMatch.getUsers().get(0).getId();
             simpMessagingTemplate.convertAndSend("/socket-response/queue/" + secondUserId, JSONMap);
+            System.out.println(currentMatch.getDeserializedGame());
         } else{
-            JSONMap.put("userId", (Long) session.getAttribute("userId"));
+            JSONMap.put("userId", session.getAttribute("userId"));
         }
 
         return ResponseEntity.ok(JSONMap);
     }
 
-//    @MessageMapping("/queue/{userId}")
-//    @SendTo("/socket-response/queue/{userId}")
-//    public ResponseEntity gameStarter(){
-//        UserEntity currentUser = (UserEntity) session.getAttribute("user");
-//        Map<String, Object> JSONMap = new HashMap<>();
-//        try {
-//            JSONMap.put("game", matchService.getLastOpenGameBasedOnUser(currentUser));
-//            return ResponseEntity.ok(JSONMap);
-//        } catch (IOException | NullPointerException e) {
-//            e.printStackTrace();
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
     @MessageMapping("/match/{matchId}")
     @SendTo("/socket-response/match/{matchId}")

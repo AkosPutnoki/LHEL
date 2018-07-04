@@ -245,4 +245,21 @@ public class Game implements Serializable {
         button = button.equals(playerOne) ? playerTwo : playerOne;
         dealHands();
     }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "deck=" + deck +
+                ", playerOne=" + playerOne +
+                ", playerTwo=" + playerTwo +
+                ", burner=" + burner +
+                ", board=" + board +
+                ", turn=" + turn +
+                ", button=" + button +
+                ", stage=" + stage +
+                ", raiseCounter=" + raiseCounter +
+                ", isOpen=" + isOpen +
+                ", matchId=" + matchId +
+                '}';
+    }
 }
