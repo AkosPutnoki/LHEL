@@ -15,22 +15,42 @@
       <div class="col-md-auto" *ngFor="let number of [0,1]">
         <img src="https://i.pinimg.com/736x/90/04/5e/90045ee90ffda21b689af6a2847e6b0d--cool-playing-cards-trump-card.jpg" width="88" height="128">
       </div>
+      <div class="col-md-auto">
+        <p>Enemy's stack</p>
+        <p>{{getEnemyPlayer().stack}}</p>
+      </div>
     </div>
-    <div class="row" id="boardCards">
-      <div class="col">Cards on board</div>
-      <div class="col" *ngFor="let card of getGame().board.cards">
+    <div class="row justify-content-center">
+      <div class="col-md-auto" id="boardCardsTitle">The board</div>
+    </div>
+    <div class="row justify-content-center" id="boardCards">
+      <div class="col-md-auto" *ngFor="let card of getGame().board.cards">
         <img class="card" src="https://raw.githubusercontent.com/hayeah/playing-cards-assets/master/png/{{card.rank | lowercase}}_of_{{card.suit | lowercase}}s.png" width="88" height="128">
       </div>
-      <div class="col" *ngFor="let number of getPlaceHolderArray()">
+      <div class="col-md-auto" *ngFor="let number of getPlaceHolderArray()">
         <img class="emptyCard" src="http://www.designsolid.com/cdn/5/1994/123/blank-playing-card-template_95765.png" width="88" height="128">
+      </div>
+      <div class="col-md-auto">
+        <p>Pot size</p>
+        <p>{{getGame().board.pot}}</p>
+      </div>
+      <div class="col-md-auto">
+        <button [disabled]="isTurn()" class="btn btn-info" (click)="handlePlayerAction('CHECK')">Check</button>
+        <button [disabled]="isTurn()" class="btn btn-basic" (click)="handlePlayerAction('CALL')">Call</button>
+        <button [disabled]="isTurn()" class="btn btn-success" (click)="handlePlayerAction('RAISE')">Raise</button>
+        <button [disabled]="isTurn()" class="btn btn-danger" (click)="handlePlayerAction('FOLD')">Fold</button>
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="col-md-auto">Your cards</div>
     </div>
     <div class="row justify-content-center" id="userCards">
-      <div class="col-md-auto" *ngFor="let card of getGame().playerOne.hand === null ? getGame().playerTwo.hand : getGame().playerOne.hand">
+      <div class="col-md-auto" *ngFor="let card of getCurrentPlayer().hand">
         <img class="card" src="https://raw.githubusercontent.com/hayeah/playing-cards-assets/master/png/{{card.rank | lowercase}}_of_{{card.suit | lowercase}}s.png" width="88" height="128">
+      </div>
+      <div class="col-md-auto">
+        <p>Your stack</p>
+        <p>{{getCurrentPlayer().stack}}</p>
       </div>
     </div>
   </div>

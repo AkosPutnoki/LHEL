@@ -1,10 +1,13 @@
 package com.codecool.lhel.service;
 
+import com.codecool.lhel.domain.enums.Action;
 import com.codecool.lhel.domain.game.Game;
+import com.codecool.lhel.domain.game.Player;
 import com.codecool.lhel.domain.userRelated.Match;
 import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.codecool.lhel.repository.MatchRepository;
 import com.codecool.lhel.repository.UserRepository;
+import com.codecool.lhel.util.GameSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,11 +50,21 @@ public class MatchService {
         return null;
     }
 
-    public Game getLastOpenGameBasedOnUser(UserEntity user) throws IOException {
+    public Game getLastOpenGameBasedOnUser(UserEntity user) {
         Match match = matchRepository.findFirstByUsersContainingOrderByIdDesc(user);
         Game game = match.getDeserializedGame();
         if(game.isOpen())
             return game;
         return null;
     }
+
+    public Match handleGameAction(UserEntity user, Game game, Action action){
+        Player currentPlayer = game.getPlayerOne().getUserId() == user.getId() ? game.getPlayerOne() : game.getPlayerTwo();
+        game.handleGameFlow(currentPlayer, action);
+        Match match = matchRepository.findOne(game.getMatchId());
+        match.setDeserializedGame(game);
+        matchRepository.save(match);
+        return match;
+    }
+
 }

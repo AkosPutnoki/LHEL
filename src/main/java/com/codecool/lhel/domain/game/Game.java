@@ -113,7 +113,7 @@ public class Game implements Serializable {
         moveCard(deck.getCards(), playerTwo.getHand(), 2);
     }
 
-    public void compareHands() throws IOException {
+    public void compareHands() {
         List<Card> playerOneCardState = board.getCards();
         playerOneCardState.addAll(playerOne.getHand());
 
@@ -122,16 +122,27 @@ public class Game implements Serializable {
 
         Player winner;
 
-        switch(GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState)) {
-            case 1: winner = playerOne; break;
-            case 2: winner = playerTwo; break;
-            default: winner = null; break;
-        }
+        try {
+            switch (GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState)) {
+                case 1:
+                    winner = playerOne;
+                    break;
+                case 2:
+                    winner = playerTwo;
+                    break;
+                default:
+                    winner = null;
+                    break;
+            }
 
-        handleResult(winner);
+            handleResult(winner);
+        }catch (IOException e){
+            e.printStackTrace();
+            //TODO FEEDBACK FOR THE USER ABOUT WS DOWNTIME
+        }
     }
 
-    private void handleResult(Player winner) throws IOException {
+    private void handleResult(Player winner) {
 
         if(winner != null){
             winner.increaseStack(board.getPot());
@@ -147,7 +158,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void handlePlayerAction(Player player, Action action, BetSize betSize) throws IOException {
+    public void handlePlayerAction(Player player, Action action, BetSize betSize) {
         switch(action){
             case RAISE:
                     player.decreaseStack(board.getRaise() + betSize.getValue());
@@ -174,7 +185,7 @@ public class Game implements Serializable {
 
     }
 
-    public void handleGameFlow(Player player, Action action) throws IOException {
+    public void handleGameFlow(Player player, Action action) {
         if (player.equals(turn)){
             dealStreet();
             switch (stage) {
@@ -194,16 +205,16 @@ public class Game implements Serializable {
                     break;
                 case TURN:
                     if (board.getRaise() != 0) {
-                        facingRaiseLogic(player, action, BetSize.BIG_BEET, Stage.RIVER);
+                        facingRaiseLogic(player, action, BetSize.BIG_BET, Stage.RIVER);
                     } else {
-                        facingCallOrCheckLogic(player, action, BetSize.BIG_BEET, Stage.RIVER);
+                        facingCallOrCheckLogic(player, action, BetSize.BIG_BET, Stage.RIVER);
                     }
                     break;
                 case RIVER:
                     if (board.getRaise() != 0) {
-                        facingRaiseLogic(player, action, BetSize.BIG_BEET, Stage.SHOWDOWN);
+                        facingRaiseLogic(player, action, BetSize.BIG_BET, Stage.SHOWDOWN);
                     } else {
-                        facingCallOrCheckLogic(player, action, BetSize.BIG_BEET, Stage.SHOWDOWN);
+                        facingCallOrCheckLogic(player, action, BetSize.BIG_BET, Stage.SHOWDOWN);
                     }
                 case SHOWDOWN:
                     compareHands();
@@ -212,7 +223,7 @@ public class Game implements Serializable {
         }
     }
 
-    private void facingRaiseLogic(Player player, Action action, BetSize betSize, Stage toStage) throws IOException {
+    private void facingRaiseLogic(Player player, Action action, BetSize betSize, Stage toStage) {
         if (action == Action.CHECK){
             throw new BadMoveException("Can't check in small blind");
         } else if (action == Action.CALL){
@@ -230,7 +241,7 @@ public class Game implements Serializable {
         }
     }
 
-    private void facingCallOrCheckLogic(Player player, Action action, BetSize betSize, Stage toStage) throws IOException {
+    private void facingCallOrCheckLogic(Player player, Action action, BetSize betSize, Stage toStage) {
         if (action == Action.CALL){
             throw new BadMoveException("Can't call to call or check");
         } else if (action == Action.RAISE){

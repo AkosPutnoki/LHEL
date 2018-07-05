@@ -1,5 +1,6 @@
 package com.codecool.lhel.controllerRest;
 
+import com.codecool.lhel.domain.enums.Action;
 import com.codecool.lhel.domain.game.Game;
 import com.codecool.lhel.domain.userRelated.Match;
 import com.codecool.lhel.domain.userRelated.UserEntity;
@@ -9,6 +10,7 @@ import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -48,15 +50,11 @@ public class MatchController {
 
             Game game = currentMatch.getDeserializedGame();
             game.getPlayerTwo().setHand(null);
-            game.getTurn().setHand(null);
-            game.getButton().setHand(null);
             JSONMap.put("game", game);
             simpMessagingTemplate.convertAndSend("/socket-response/queue/" + currentMatch.getUsers().get(0).getId(), JSONMap);
 
             game = currentMatch.getDeserializedGame();
             game.getPlayerOne().setHand(null);
-            game.getTurn().setHand(null);
-            game.getButton().setHand(null);
             JSONMap.put("game", game);
         } else{
             JSONMap.put("userId", session.getAttribute("userId"));
@@ -67,10 +65,29 @@ public class MatchController {
 
 
     @MessageMapping("/match/{matchId}")
-    @SendTo("/socket-response/match/{matchId}")
-    public void gameHandler(){
+    public void gameHandler(ActionJSON actionJSON){
+        UserEntity currentUser = userService.getUserById((Long) session.getAttribute("userId"));
+        Game currentGame = matchService.getLastOpenGameBasedOnUser(currentUser);
+        Match currentMatch = matchService.handleGameAction(currentUser, currentGame, actionJSON.action);
+        Map<String, Object> JSONMap = new HashMap<>();
 
+        Game game = currentMatch.getDeserializedGame();
+        game.getPlayerTwo().setHand(null);
+        JSONMap.put("game", game);
+        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(0).getId(), JSONMap);
+
+        game = currentMatch.getDeserializedGame();
+        game.getPlayerOne().setHand(null);
+        JSONMap.put("game", game);
+        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(1).getId(), JSONMap);
     }
 
 
+    private static class ActionJSON {
+        private Action action;
+
+        public void setAction(Action action) {
+            this.action = action;
+        }
+    }
 }

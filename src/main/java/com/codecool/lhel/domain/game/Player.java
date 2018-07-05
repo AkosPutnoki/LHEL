@@ -10,14 +10,13 @@ import java.util.List;
 
 public class Player implements Serializable{
 
-    @JsonIgnore
-    private UserEntity user;
+    private long userId;
     private String name;
     private List<Card> hand;
     private Integer stack;
 
     public Player(UserEntity user) {
-        this.user = user;
+        userId = user.getId();
         name = user.getName();
         hand = new ArrayList<>();
         stack = 10000;
@@ -47,6 +46,9 @@ public class Player implements Serializable{
         this.stack -= raise;
     }
 
+    public long getUserId() {
+        return userId;
+    }
 
     public String getName() {
         return name;

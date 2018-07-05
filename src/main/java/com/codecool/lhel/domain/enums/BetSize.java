@@ -6,7 +6,7 @@ public enum BetSize {
     SMALL_BLIND(50),
     BIG_BLIND(100),
     SMALL_BET(100),
-    BIG_BEET(200);
+    BIG_BET(200);
 
     private int value;
 

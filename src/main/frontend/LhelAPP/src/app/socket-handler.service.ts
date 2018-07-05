@@ -23,7 +23,7 @@ export class SocketHandlerService {
     });
   }
 
-  sendMessage(message){
-    this.stompClient.send("/socket-request/" , {}, message);
+  sendMessage(message: any, urlSuffix: string){
+    this.stompClient.send("/socket-request/" + urlSuffix, {}, JSON.stringify(message));
   }
 }

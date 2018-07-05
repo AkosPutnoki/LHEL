@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {game} from "./game-domain/game";
 import {SocketHandlerService} from "./socket-handler.service";
 import {Router} from "@angular/router";
+import {player} from "./game-domain/player";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -16,7 +17,7 @@ const apiURL = 'http://localhost:60001/match/';
 export class MatchService {
 
   game: game = null;
-
+  isTurn: boolean = false;
 
   constructor(private http: HttpClient,
               private socketHandler: SocketHandlerService,
@@ -33,10 +34,19 @@ export class MatchService {
   }
 
   handleGame(responseBody: Object, scope: any = this){
-      scope.game = responseBody["game"];
-      if(scope.socketHandler.urlSuffix !== "match/" + scope.game["matchId"])
-        scope.socketHandler.initializeWebSocketConnection("match/" + scope.game["matchId"], scope.handleGame, scope);
+    scope.game = responseBody["game"];
+    scope.isTurn = scope.getCurrentPlayerId() !== scope.game.turn.id;
+    let suffix = `match/${scope.game["matchId"]}/${scope.getCurrentPlayerId()}`;
+      if(scope.socketHandler.urlSuffix !== suffix)
+        scope.socketHandler.initializeWebSocketConnection(suffix, scope.handleGame, scope);
   }
 
+  getCurrentPlayerId(): number{
+    return this.game.playerOne.hand === null ? this.game.playerTwo.id : this.game.playerOne.id;
+  }
 
+  sendPlayerAction(action: string) {
+    let json = {"action": action}
+    this.socketHandler.sendMessage(json, "match/" + this.game.matchId);
+  }
 }

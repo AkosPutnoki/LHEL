@@ -73,6 +73,7 @@ public class Match implements Serializable{
     }
 
     public Game getDeserializedGame(){
+        //TODO make this better
         try {
             return GameSerializer.deSerialize(game);
         } catch (IOException e) {
@@ -84,5 +85,13 @@ public class Match implements Serializable{
 
     public void setGame(byte[] game) {
         this.game = game;
+    }
+
+    public void setDeserializedGame(Game game){
+        try{
+            this.game = GameSerializer.serialize(game);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
