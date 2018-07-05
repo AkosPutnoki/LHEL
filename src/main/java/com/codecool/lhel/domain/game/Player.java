@@ -46,4 +46,17 @@ public class Player implements Serializable{
     public void decreaseStack(Integer raise){
         this.stack -= raise;
     }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
+    }
 }

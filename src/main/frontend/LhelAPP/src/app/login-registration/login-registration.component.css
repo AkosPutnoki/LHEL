@@ -1,3 +1,7 @@
 #error {
   color: red;
 }
+
+.row {
+  margin: 25px;
+}

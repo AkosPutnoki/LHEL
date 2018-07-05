@@ -1,23 +1,38 @@
 <div>
-  <form #signupForm="ngForm" (ngSubmit)="loginRegistration(signupForm, 'registration')" ngNativeValidate>
-    <div id="error">{{errorMessage}}</div>
-    <h2>Registration</h2>
-    <label>Username:
-      <input ngModel name="name" placeholder="Your username" type="text" required minlength="3" maxlength="10">
-    </label>
-    <label>Password:
-      <input ngModel name="password" placeholder="Your password" type="password" required minlength="3" maxlength="10">
-    </label>
-    <button type="submit">Register</button>
-  </form>
-  <form #loginForm="ngForm" (ngSubmit)="loginRegistration(loginForm, 'login')" ngNativeValidate>
-    <h2>Login</h2>
-    <label>Username:
-      <input ngModel name="name" placeholder="Your username" type="text" required minlength="3" maxlength="10">
-    </label>
-    <label>Password:
-      <input ngModel name="password" placeholder="Your password" type="password" required minlength="3" maxlength="10">
-    </label>
-    <button type="submit">Log me in!</button>
-  </form>
+  <div class="container">
+    <div class="row ">
+      <div class="col">
+        <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="openTab">
+          <label ngbButtonLabel class="btn-primary">
+            <input ngbButton type="radio" value="login"> Login
+          </label>
+          <label ngbButtonLabel class="btn-primary">
+            <input ngbButton type="radio" value="registration"> Registration
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div id="error">{{errorMessage}}</div>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <form #signupForm="ngForm" (ngSubmit)="loginRegistration(signupForm, openTab)" ngNativeValidate>
+        <div class="col">
+          <label>Username:
+            <input ngModel name="name" placeholder=" Your username" type="text" required minlength="3" maxlength="10">
+          </label>
+        </div>
+        <div class="col">
+          <label>Password:
+            <input ngModel name="password" placeholder=" Your password" type="password" required minlength="3" maxlength="10">
+          </label>
+        </div>
+        <div>
+          <button type="submit" class="text-capitalize btn btn-success">{{openTab}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

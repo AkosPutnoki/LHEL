@@ -11,6 +11,8 @@ import {Router} from "@angular/router";
 export class LoginRegistrationComponent implements OnInit {
 
   private errorMessage: string = "";
+  public openTab = "login";
+
 
   constructor(private userService: UserService,
               private router: Router) { }

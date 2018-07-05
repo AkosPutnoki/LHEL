@@ -11,7 +11,7 @@ import {game} from "../game-domain/game";
 })
 export class DashboardComponent implements OnInit {
 
-  private loading:boolean = false;
+  private loading: boolean = false;
 
   constructor(private matchService: MatchService) {
   }
@@ -19,19 +19,23 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
   }
 
-  addPlayerToQueue(){
+  addPlayerToQueue() {
     this.matchService.addPlayerToQueue().subscribe(response => {
-      if(response['userId']){
+      if (response['userId']) {
         this.matchService.subscribeToQueue(response['userId']);
         this.loading = true;
-      } else if(response['game']){
+      } else if (response['game']) {
         this.matchService.handleGame(response);
       }
     });
   }
 
-  getGame(){
+  getGame() {
     return this.matchService.game;
+  }
+
+  getPlaceHolderArray() {
+    Array.from(Array(3 - this.getGame().board.cards.length))
   }
 
 }

@@ -47,12 +47,16 @@ public class MatchController {
         if(currentMatch != null){
 
             Game game = currentMatch.getDeserializedGame();
-            game.setPlayerTwo(null);
+            game.getPlayerTwo().setHand(null);
+            game.getTurn().setHand(null);
+            game.getButton().setHand(null);
             JSONMap.put("game", game);
             simpMessagingTemplate.convertAndSend("/socket-response/queue/" + currentMatch.getUsers().get(0).getId(), JSONMap);
 
             game = currentMatch.getDeserializedGame();
-            game.setPlayerOne(null);
+            game.getPlayerOne().setHand(null);
+            game.getTurn().setHand(null);
+            game.getButton().setHand(null);
             JSONMap.put("game", game);
         } else{
             JSONMap.put("userId", session.getAttribute("userId"));

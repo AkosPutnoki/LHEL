@@ -1,0 +1,14 @@
+.loading{
+  margin: 15px;
+}
+
+.card{
+  background-color: white;
+  border: 1.5px solid black;
+}
+
+.emptyCard{
+  background-color: white;
+  opacity: 0.6;
+  border: 0.5px solid black;
+}
