@@ -29,11 +29,14 @@ export class MatchService {
 
 
   subscribeToQueue(userId: number){
-    this.socketHandler.initializeWebSocketConnection("queue/" + userId, this.getGameFromResponse);
+    this.socketHandler.initializeWebSocketConnection("queue/" + userId, this.handleGame, this);
   }
 
-  getGameFromResponse(responseBody: Object){
-    this.game = responseBody["game"];
+  handleGame(responseBody: Object, scope: any = this){
+      scope.game = responseBody["game"];
+      if(scope.socketHandler.urlSuffix !== "match/" + scope.game["matchId"])
+        scope.socketHandler.initializeWebSocketConnection("match/" + scope.game["matchId"], scope.handleGame, scope);
   }
+
 
 }

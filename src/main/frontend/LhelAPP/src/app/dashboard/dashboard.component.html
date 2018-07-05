@@ -7,5 +7,10 @@
 </div>
 
 <div id="game" *ngIf="getGame()">
-  GAME
+  GameId {{getGame().matchId}}
+
+  <div *ngFor="let card of getGame().playerOne === null ? getGame().playerTwo.hand : getGame().playerOne.hand">
+      <img src="https://raw.githubusercontent.com/hayeah/playing-cards-assets/master/png/{{card.rank | lowercase}}_of_{{card.suit | lowercase}}s.png" width="88" height="128">
+  </div>
+
 </div>

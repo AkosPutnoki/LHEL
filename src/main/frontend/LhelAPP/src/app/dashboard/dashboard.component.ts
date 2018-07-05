@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit {
         this.matchService.subscribeToQueue(response['userId']);
         this.loading = true;
       } else if(response['game']){
-        this.matchService.getGameFromResponse(response);
+        this.matchService.handleGame(response);
       }
     });
   }
@@ -33,6 +33,5 @@ export class DashboardComponent implements OnInit {
   getGame(){
     return this.matchService.game;
   }
-
 
 }

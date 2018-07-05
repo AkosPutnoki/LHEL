@@ -17,7 +17,6 @@ public class Game implements Serializable {
     private Deck deck;
     private Player playerOne;
     private Player playerTwo;
-
     @JsonIgnore
     private Burner burner;
     private Board board;
@@ -39,6 +38,10 @@ public class Game implements Serializable {
         newRound();
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
+
     public Player getPlayerOne() {
         return playerOne;
     }
@@ -47,8 +50,44 @@ public class Game implements Serializable {
         return playerTwo;
     }
 
+    public Burner getBurner() {
+        return burner;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public Player getTurn() {
+        return turn;
+    }
+
+    public Player getButton() {
+        return button;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Integer getRaiseCounter() {
+        return raiseCounter;
+    }
+
     public boolean isOpen() {
         return isOpen;
+    }
+
+    public long getMatchId() {
+        return matchId;
+    }
+
+    public void setPlayerOne(Player playerOne) {
+        this.playerOne = playerOne;
+    }
+
+    public void setPlayerTwo(Player playerTwo) {
+        this.playerTwo = playerTwo;
     }
 
     private void changeTurn(){
@@ -244,22 +283,5 @@ public class Game implements Serializable {
         raiseCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
         dealHands();
-    }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "deck=" + deck +
-                ", playerOne=" + playerOne +
-                ", playerTwo=" + playerTwo +
-                ", burner=" + burner +
-                ", board=" + board +
-                ", turn=" + turn +
-                ", button=" + button +
-                ", stage=" + stage +
-                ", raiseCounter=" + raiseCounter +
-                ", isOpen=" + isOpen +
-                ", matchId=" + matchId +
-                '}';
     }
 }

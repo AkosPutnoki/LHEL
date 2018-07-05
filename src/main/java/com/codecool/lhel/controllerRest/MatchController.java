@@ -45,10 +45,15 @@ public class MatchController {
         Map<String, Object> JSONMap = new HashMap<>();
 
         if(currentMatch != null){
-            JSONMap.put("game", currentMatch.getDeserializedGame());
-            Long secondUserId =  currentMatch.getUsers().get(0).getId() == ((Long) session.getAttribute("userId")) ? currentMatch.getUsers().get(1).getId() : currentMatch.getUsers().get(0).getId();
-            simpMessagingTemplate.convertAndSend("/socket-response/queue/" + secondUserId, JSONMap);
-            System.out.println(currentMatch.getDeserializedGame());
+
+            Game game = currentMatch.getDeserializedGame();
+            game.setPlayerTwo(null);
+            JSONMap.put("game", game);
+            simpMessagingTemplate.convertAndSend("/socket-response/queue/" + currentMatch.getUsers().get(0).getId(), JSONMap);
+
+            game = currentMatch.getDeserializedGame();
+            game.setPlayerOne(null);
+            JSONMap.put("game", game);
         } else{
             JSONMap.put("userId", session.getAttribute("userId"));
         }

@@ -1,5 +1,8 @@
 package com.codecool.lhel.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Rank {
     DEUCE("2"),
     THREE("3"),
@@ -25,4 +28,12 @@ public enum Rank {
         return value;
     }
 
+    @JsonValue
+    public String toValue() {
+        try{
+            return String.valueOf(Integer.valueOf(getValue()));
+        }catch(NumberFormatException e){
+            return name();
+        }
+    }
 }
