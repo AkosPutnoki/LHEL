@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getPlaceHolderArray() {
-    return Array.from(Array(3 - this.getGame().board.cards.length));
+    return Array.from(Array(5 - this.getGame().board.cards.length));
   }
 
   getCurrentPlayer(): player{

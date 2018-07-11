@@ -12,11 +12,15 @@ import java.io.BufferedReader;
 @Service
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private Gson gson;
+
+    @Autowired
+    public UserService(UserRepository userRepository, Gson gson) {
+        this.userRepository = userRepository;
+        this.gson = gson;
+    }
 
     public UserEntity registration(BufferedReader requestBody) {
 

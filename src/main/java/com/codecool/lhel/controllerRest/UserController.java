@@ -17,14 +17,18 @@ import java.io.IOException;
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    private final HttpServletRequest request;
+
+    private final HttpSession session;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private HttpSession session;
+    public UserController(UserService userService, HttpServletRequest request, HttpSession session) {
+        this.userService = userService;
+        this.request = request;
+        this.session = session;
+    }
 
     @PostMapping("/user/registration")
     public ResponseEntity registration() {
