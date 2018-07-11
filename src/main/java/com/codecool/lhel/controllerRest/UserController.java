@@ -50,7 +50,7 @@ public class UserController {
         try{
             UserEntity currentUser = userService.login(request.getReader());
             session.setAttribute("userId", currentUser.getId());
-            return ResponseEntity.ok("Login succesful!");
+            return ResponseEntity.ok("Login successful!");
         }catch (FailedDataVerificationException | IOException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Login failed due to bad input. Please try again!");

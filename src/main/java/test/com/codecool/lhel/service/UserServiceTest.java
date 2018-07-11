@@ -38,7 +38,12 @@ class UserServiceTest {
 
 
     @Test
-    void registration() {
+    void registrationWorksTest() {
+        Reader reader = new StringReader("{name: test,\n password: test}");
+        BufferedReader bf = new BufferedReader(reader);
+        when(userRepository.getUserByName("test")).thenReturn(null);
+
+        Assertions.assertEquals("test", userService.registration(bf).getName());
     }
 
     @Test
@@ -46,11 +51,11 @@ class UserServiceTest {
         Reader reader = new StringReader("{name: test,\n password: test}");
         BufferedReader bf = new BufferedReader(reader);
 
-        UserEntity mockUser = new UserEntity("test", "test");
-        UserEntity.hashPw(mockUser);
-        when(userRepository.getUserByName("test")).thenReturn(mockUser);
+        UserEntity stubUser = new UserEntity("test", "test");
+        UserEntity.hashPw(stubUser);
+        when(userRepository.getUserByName("test")).thenReturn(stubUser);
 
-        Assertions.assertEquals(mockUser, userService.login(bf));
+        Assertions.assertEquals(stubUser, userService.login(bf));
 
     }
 
