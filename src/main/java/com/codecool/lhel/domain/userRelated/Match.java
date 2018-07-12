@@ -24,7 +24,7 @@ public class Match implements Serializable{
     private long id;
 
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<UserEntity> users = new ArrayList<>();
 
@@ -37,13 +37,11 @@ public class Match implements Serializable{
         firstUser.getMatches().add(this);
         secondUser.getMatches().add(this);
         this.result = ResultType.PENDING;
-
-        createGame(firstUser, secondUser);
     }
 
-    private void createGame(UserEntity firstUser, UserEntity secondUser) {
+    public void createGame() {
         try {
-            this.game = GameSerializer.serialize(new Game(firstUser, secondUser, id));
+            this.game = GameSerializer.serialize(new Game(users.get(0), users.get(1), id));
         } catch (IOException e) {
             e.printStackTrace();
         }

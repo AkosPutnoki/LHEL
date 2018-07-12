@@ -92,9 +92,9 @@ public class Game implements Serializable {
 
     private void changeTurn(){
         if(turn.equals(playerOne)){
-            turn = playerOne;
-        } else {
             turn = playerTwo;
+        } else {
+            turn = playerOne;
         }
     }
 

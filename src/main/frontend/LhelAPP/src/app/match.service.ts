@@ -35,14 +35,14 @@ export class MatchService {
 
   handleGame(responseBody: Object, scope: any = this){
     scope.game = responseBody["game"];
-    scope.isTurn = scope.getCurrentPlayerId() !== scope.game.turn.id;
+    scope.isTurn = scope.getCurrentPlayerId() !== scope.game.turn.userId;
     let suffix = `match/${scope.game["matchId"]}/${scope.getCurrentPlayerId()}`;
       if(scope.socketHandler.urlSuffix !== suffix)
         scope.socketHandler.initializeWebSocketConnection(suffix, scope.handleGame, scope);
   }
 
   getCurrentPlayerId(): number{
-    return this.game.playerOne.hand === null ? this.game.playerTwo.id : this.game.playerOne.id;
+    return this.game.playerOne.hand === null ? this.game.playerTwo.userId : this.game.playerOne.userId;
   }
 
   sendPlayerAction(action: string) {

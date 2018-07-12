@@ -45,13 +45,16 @@ public class MatchService {
             Match match = new Match(userOne, userTwo);
 ;
             matchRepository.save(match);
+            match.createGame();
+            matchRepository.save(match);
+
             return match;
         }
         return null;
     }
 
     public Game getLastOpenGameBasedOnUser(UserEntity user) {
-        Match match = matchRepository.findFirstByUsersContainingOrderByIdDesc(user);
+        Match match = matchRepository.findFirstByUsersContainsOrderByIdDesc(user);
         Game game = match.getDeserializedGame();
         if(game.isOpen())
             return game;

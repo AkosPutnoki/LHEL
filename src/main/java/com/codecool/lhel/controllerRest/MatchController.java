@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,8 +67,8 @@ public class MatchController {
 
 
     @MessageMapping("/match/{matchId}")
-    public void gameHandler(ActionJSON actionJSON){
-        UserEntity currentUser = userService.getUserById((Long) session.getAttribute("userId"));
+    public void gameHandler(@Payload ActionJSON actionJSON, SimpMessageHeaderAccessor headerAccessor){
+        UserEntity currentUser = userService.getUserById((Long) headerAccessor.getSessionAttributes().get("userId"));
         Game currentGame = matchService.getLastOpenGameBasedOnUser(currentUser);
         Match currentMatch = matchService.handleGameAction(currentUser, currentGame, actionJSON.action);
         Map<String, Object> JSONMap = new HashMap<>();
