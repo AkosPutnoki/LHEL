@@ -23,7 +23,7 @@ export class LoginRegistrationComponent implements OnInit {
   loginRegistration(form: NgForm, urlSuffix: string){
     this.userService.loginRegistration(form.value.name, form.value.password, urlSuffix)
       .subscribe(response => this.router.navigateByUrl('/dashboard'),
-                      error => this.errorMessage = error.error);
+                      error => {if(error.status === 406)this.errorMessage = error.error});
   }
 
 }

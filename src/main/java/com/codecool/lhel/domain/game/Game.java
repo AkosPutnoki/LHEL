@@ -119,10 +119,10 @@ public class Game implements Serializable {
     }
 
     public void compareHands() {
-        List<Card> playerOneCardState = board.getCards();
+        List<Card> playerOneCardState = new ArrayList<>(board.getCards());
         playerOneCardState.addAll(playerOne.getHand());
 
-        List<Card> playerTwoCardState = board.getCards();
+        List<Card> playerTwoCardState = new ArrayList<>(board.getCards());
         playerTwoCardState.addAll(playerTwo.getHand());
 
         Player winner;
@@ -158,6 +158,8 @@ public class Game implements Serializable {
             playerOne.increaseStack(board.getPot()/2);
             playerTwo.increaseStack(board.getPot()/2);
         }
+
+        board.setPot(0);
 
         if(playerOne.getStack() == 0 || playerTwo.getStack() == 0){
             isOpen = false;

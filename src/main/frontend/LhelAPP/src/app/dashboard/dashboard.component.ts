@@ -44,11 +44,11 @@ export class DashboardComponent implements OnInit {
   }
 
   getCurrentPlayer(): player{
-    return this.getGame().playerOne.hand === null ? this.getGame().playerTwo : this.getGame().playerOne;
+    return this.getGame().playerOne.userId === this.matchService.getCurrentPlayerId() ? this.getGame().playerOne : this.getGame().playerTwo;
   }
 
   getEnemyPlayer(): player{
-    return this.getGame().playerOne.hand === null ? this.getGame().playerOne : this.getGame().playerTwo;
+    return this.getGame().playerOne.userId === this.matchService.getCurrentPlayerId() ? this.getGame().playerTwo : this.getGame().playerOne;
   }
 
   isTurn(): boolean{

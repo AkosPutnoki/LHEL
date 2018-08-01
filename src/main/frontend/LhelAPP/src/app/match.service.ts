@@ -18,6 +18,7 @@ export class MatchService {
 
   game: game = null;
   isTurn: boolean = false;
+  userId: number = -1;
 
   constructor(private http: HttpClient,
               private socketHandler: SocketHandlerService,
@@ -35,14 +36,17 @@ export class MatchService {
 
   handleGame(responseBody: Object, scope: any = this){
     scope.game = responseBody["game"];
-    scope.isTurn = scope.getCurrentPlayerId() !== scope.game.turn.userId;
+    scope.isTurn = scope.getCurrentPlayerId() === scope.game.turn.userId;
     let suffix = `match/${scope.game["matchId"]}/${scope.getCurrentPlayerId()}`;
       if(scope.socketHandler.urlSuffix !== suffix)
         scope.socketHandler.initializeWebSocketConnection(suffix, scope.handleGame, scope);
   }
 
   getCurrentPlayerId(): number{
-    return this.game.playerOne.hand === null ? this.game.playerTwo.userId : this.game.playerOne.userId;
+    if(this.userId === -1){
+      this.userId = this.game.playerOne.hand === null ? this.game.playerTwo.userId : this.game.playerOne.userId;
+    }
+    return this.userId
   }
 
   sendPlayerAction(action: string) {
