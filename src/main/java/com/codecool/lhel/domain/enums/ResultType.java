@@ -2,9 +2,9 @@ package com.codecool.lhel.domain.enums;
 
 public enum ResultType {
     PENDING,
-    STALEMATE,
-    USER1WON(0),
-    USER2WON(1);
+    CHOP,
+    PLAYERONEWON(1),
+    PLAYERTWOWON(2);
 
     private int playerIndex;
 

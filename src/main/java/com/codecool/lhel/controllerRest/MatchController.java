@@ -1,6 +1,7 @@
 package com.codecool.lhel.controllerRest;
 
 import com.codecool.lhel.domain.enums.Action;
+import com.codecool.lhel.domain.enums.ResultType;
 import com.codecool.lhel.domain.game.Game;
 import com.codecool.lhel.domain.userRelated.Match;
 import com.codecool.lhel.domain.userRelated.UserEntity;
@@ -74,12 +75,14 @@ public class MatchController {
         Map<String, Object> JSONMap = new HashMap<>();
 
         Game game = currentMatch.getDeserializedGame();
-        game.getPlayerTwo().setHand(null);
+        if(game.getResult() == ResultType.PENDING)
+            game.getPlayerTwo().setHand(null);
         JSONMap.put("game", game);
         simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(0).getId(), JSONMap);
 
         game = currentMatch.getDeserializedGame();
-        game.getPlayerOne().setHand(null);
+        if(game.getResult() == ResultType.PENDING)
+            game.getPlayerOne().setHand(null);
         JSONMap.put("game", game);
         simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(1).getId(), JSONMap);
     }

@@ -2,6 +2,7 @@ package com.codecool.lhel.domain.game;
 
 import com.codecool.lhel.domain.enums.Action;
 import com.codecool.lhel.domain.enums.BetSize;
+import com.codecool.lhel.domain.enums.ResultType;
 import com.codecool.lhel.domain.enums.Stage;
 import com.codecool.lhel.domain.exceptions.BadMoveException;
 import com.codecool.lhel.domain.userRelated.UserEntity;
@@ -24,14 +25,18 @@ public class Game implements Serializable {
     private Player button;
     @JsonIgnore
     private Stage stage;
+    @JsonIgnore
     private Integer raiseCounter;
     private boolean isOpen;
     private long matchId;
+    @JsonIgnore
+    private boolean firstActOnStage;
+    private ResultType result;
 
     public Game(UserEntity userOne, UserEntity userTwo, long matchId) {
         this.playerOne = new Player(userOne);
         this.playerTwo = new Player(userTwo);
-        turn = playerOne;
+        turn = playerTwo;
         button = playerTwo;
         isOpen = true;
         this.matchId = matchId;
@@ -126,12 +131,15 @@ public class Game implements Serializable {
             switch (GameService.getWinnerBasedOnHands(playerOneCardState, playerTwoCardState)) {
                 case 1:
                     winner = playerOne;
+                    result = ResultType.PLAYERONEWON;
                     break;
                 case 2:
                     winner = playerTwo;
+                    result = ResultType.PLAYERTWOWON;
                     break;
                 default:
                     winner = null;
+                    result = ResultType.CHOP;
                     break;
             }
 
@@ -151,9 +159,7 @@ public class Game implements Serializable {
             playerTwo.increaseStack(board.getPot()/2);
         }
 
-        if(playerOne.getStack() > 0 && playerTwo.getStack() > 0){
-            newRound();
-        } else{
+        if(playerOne.getStack() == 0 || playerTwo.getStack() == 0){
             isOpen = false;
         }
     }
@@ -177,8 +183,12 @@ public class Game implements Serializable {
                     break;
             case FOLD:
                     if(player.equals(playerOne)){
+                        result = ResultType.PLAYERTWOWON;
+                        playerOne.setHand(null);
                         handleResult(playerTwo);
                     }else{
+                        result = ResultType.PLAYERONEWON;
+                        playerTwo.setHand(null);
                         handleResult(playerOne);
                     } break;
         }
@@ -187,7 +197,6 @@ public class Game implements Serializable {
 
     public void handleGameFlow(Player player, Action action) {
         if (player.equals(turn)){
-            dealStreet();
             switch (stage) {
                 case PREFLOP:
                     if (board.getRaise() != 0) {
@@ -219,6 +228,7 @@ public class Game implements Serializable {
                 case SHOWDOWN:
                     compareHands();
             }
+            dealStreet();
             changeTurn();
         }
     }
@@ -228,8 +238,12 @@ public class Game implements Serializable {
             throw new BadMoveException("Can't check in small blind");
         } else if (action == Action.CALL){
             handlePlayerAction(player, action, BetSize.NO_BET);
-            if (stage != Stage.PREFLOP){
+            if (stage != Stage.PREFLOP || !firstActOnStage){
                 stage = toStage;
+                raiseCounter = 0;
+                turn = playerOne.equals(button) ? playerOne : playerTwo;
+                firstActOnStage = true;
+                return;
             }
         } else if (action == Action.RAISE){
             if (raiseCounter < 4){
@@ -239,6 +253,7 @@ public class Game implements Serializable {
                 throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
             }
         }
+        firstActOnStage = false;
     }
 
     private void facingCallOrCheckLogic(Player player, Action action, BetSize betSize, Stage toStage) {
@@ -253,10 +268,15 @@ public class Game implements Serializable {
             }
         } else if (action == Action.CHECK){
             handlePlayerAction(player, action, BetSize.NO_BET);
-            if (stage != Stage.PREFLOP){
+            if(!firstActOnStage) {
                 stage = toStage;
+                raiseCounter = 0;
+                turn = playerOne.equals(button) ? playerOne : playerTwo;
+                firstActOnStage = true;
+                return;
             }
         }
+        firstActOnStage = false;
     }
 
     private void dealStreet(){
@@ -282,8 +302,18 @@ public class Game implements Serializable {
         }
     }
 
+    private void gatherBlinds(Player small, Player big){
+        small.decreaseStack(BetSize.SMALL_BLIND.getValue());
+        board.increasePot(BetSize.SMALL_BLIND.getValue());
+        big.decreaseStack(BetSize.BIG_BLIND.getValue());
+        board.increasePot(BetSize.BIG_BLIND.getValue());
+
+        board.setRaise(50);
+    }
+
 
     private void newRound(){
+        result = ResultType.PENDING;
         deck = new Deck();
         playerOne.foldHand();
         playerTwo.foldHand();
@@ -293,6 +323,14 @@ public class Game implements Serializable {
         stage = Stage.PREFLOP;
         raiseCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
+        turn = button;
+        Player notButton = button.equals(playerOne) ? playerTwo : playerOne;
+        gatherBlinds(button, notButton);
+        firstActOnStage = true;
         dealHands();
+    }
+
+    public ResultType getResult() {
+        return result;
     }
 }

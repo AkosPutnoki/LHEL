@@ -12,9 +12,16 @@
       <div class="col-md-auto">Your enemy's cards</div>
     </div>
     <div class="row justify-content-center" id="enemyPlayer">
-      <div class="col-md-auto" *ngFor="let number of [0,1]">
-        <img src="https://i.pinimg.com/736x/90/04/5e/90045ee90ffda21b689af6a2847e6b0d--cool-playing-cards-trump-card.jpg" width="88" height="128">
+      <div *ngIf="getEnemyPlayer().hand !== null; else placeholder">
+        <div class="col-md-auto" *ngFor="let card of getEnemyPlayer().hand">
+          <img class="card" src="https://raw.githubusercontent.com/hayeah/playing-cards-assets/master/png/{{card.rank | lowercase}}_of_{{card.suit | lowercase}}s.png" width="88" height="128">
+        </div>
       </div>
+      <ng-template #placeholder>
+        <div class="col-md-auto" *ngFor="let number of [0,1]">
+          <img src="https://i.pinimg.com/736x/90/04/5e/90045ee90ffda21b689af6a2847e6b0d--cool-playing-cards-trump-card.jpg" width="88" height="128">
+        </div>
+      </ng-template>
       <div class="col-md-auto">
         <p>Enemy's stack</p>
         <p>{{getEnemyPlayer().stack}}</p>
@@ -43,7 +50,7 @@
         <p>Your stack</p>
         <p>{{getCurrentPlayer().stack}}</p>
       </div>
-      <div class="col-md-auto">
+      <div class="col-md-auto" *ngIf="getGame().result === 'PENDING'">
         <button [disabled]="isTurn()" class="btn btn-info" (click)="handlePlayerAction('CHECK')">Check</button>
         <button [disabled]="isTurn()" class="btn btn-basic" (click)="handlePlayerAction('CALL')">Call</button>
         <button [disabled]="isTurn()" class="btn btn-success" (click)="handlePlayerAction('RAISE')">Raise</button>
