@@ -49,6 +49,7 @@ export class MatchService {
     return this.userId
   }
 
+
   sendPlayerAction(action: string) {
     let json = {"action": action}
     this.socketHandler.sendMessage(json, "match/" + this.game.matchId);

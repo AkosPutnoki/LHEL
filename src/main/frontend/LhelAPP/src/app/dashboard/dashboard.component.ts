@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component,OnInit} from '@angular/core';
 
-import {SocketHandlerService} from "../socket-handler.service";
 import {MatchService} from "../match.service";
 import {game} from "../game-domain/game";
 import {player} from "../game-domain/player";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-dashboard',
@@ -13,12 +13,16 @@ import {player} from "../game-domain/player";
 export class DashboardComponent implements OnInit {
 
   private loading: boolean = false;
+  private result: string = "PENDING";
+  private resultMessage: string = "";
 
-  constructor(private matchService: MatchService) {
+  constructor(private matchService: MatchService,
+              private modalService: NgbModal) {
   }
 
   ngOnInit() {
   }
+
 
   addPlayerToQueue() {
     this.matchService.addPlayerToQueue().subscribe(response => {
@@ -36,7 +40,12 @@ export class DashboardComponent implements OnInit {
   }
 
   getGame() {
-    return this.matchService.game;
+    let game: game = this.matchService.game;
+    if(game !== null && this.result === "PENDING" && game.result !== "PENDING"){
+      this.result = game.result;
+      this.open(this.result)
+    }
+    return game;
   }
 
   getPlaceHolderArray() {
@@ -55,4 +64,16 @@ export class DashboardComponent implements OnInit {
     return this.matchService.isTurn;
   }
 
+  open(resultType: string) {
+    let winner: string = "";
+    switch(resultType){
+      case "PLAYERONEWON":{
+        winner = (this.getCurrentPlayer() === this.getGame().playerOne) ? "you" : "the enemy"; break;}
+      case "PLAYERTWOWON":{
+        winner = (this.getCurrentPlayer() === this.getGame().playerTwo) ? "you" : "the enemy"; break;}
+      case "CHOP":{
+        winner = "no one"; break;}
+    }
+    this.resultMessage = `The round has ended and ${winner} won! <br> Are you ready for the next one?`;
+  }
 }
