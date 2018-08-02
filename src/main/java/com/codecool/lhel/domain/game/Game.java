@@ -166,7 +166,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void handlePlayerAction(Player player, Action action, BetSize betSize) {
+    private void handlePlayerAction(Player player, Action action, BetSize betSize) {
         switch(action){
             case RAISE:
                     player.decreaseStack(board.getRaise() + betSize.getValue());
@@ -186,11 +186,9 @@ public class Game implements Serializable {
             case FOLD:
                     if(player.equals(playerOne)){
                         result = ResultType.PLAYERTWOWON;
-                        playerOne.setHand(null);
                         handleResult(playerTwo);
                     }else{
                         result = ResultType.PLAYERONEWON;
-                        playerTwo.setHand(null);
                         handleResult(playerOne);
                     } break;
         }
@@ -199,6 +197,10 @@ public class Game implements Serializable {
 
     public void handleGameFlow(Player player, Action action) {
         if (player.equals(turn)){
+            if(action == Action.FOLD){
+                handlePlayerAction(player, action, BetSize.NO_BET);;
+                return;
+            }
             switch (stage) {
                 case PREFLOP:
                     if (board.getRaise() != 0) {
@@ -230,6 +232,7 @@ public class Game implements Serializable {
                 case SHOWDOWN:
                     compareHands();
             }
+
             dealStreet();
             changeTurn();
         }
@@ -314,7 +317,7 @@ public class Game implements Serializable {
     }
 
 
-    private void newRound(){
+    public void newRound(){
         result = ResultType.PENDING;
         deck = new Deck();
         playerOne.foldHand();
@@ -323,13 +326,13 @@ public class Game implements Serializable {
         board = new Board();
         board.setRaise(BetSize.BIG_BLIND.getValue() - BetSize.SMALL_BLIND.getValue());
         stage = Stage.PREFLOP;
-        raiseCounter = 0;
         button = button.equals(playerOne) ? playerTwo : playerOne;
         turn = button;
         Player notButton = button.equals(playerOne) ? playerTwo : playerOne;
         gatherBlinds(button, notButton);
-        firstActOnStage = true;
         dealHands();
+        firstActOnStage = true;
+        raiseCounter = 0;
     }
 
     public ResultType getResult() {

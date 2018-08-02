@@ -27,8 +27,6 @@ public class Match implements Serializable{
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<UserEntity> users = new ArrayList<>();
-
-    private ResultType result;
     private byte[] game;
 
     public Match(UserEntity firstUser, UserEntity secondUser) {
@@ -36,7 +34,6 @@ public class Match implements Serializable{
         users.add(secondUser);
         firstUser.getMatches().add(this);
         secondUser.getMatches().add(this);
-        this.result = ResultType.PENDING;
     }
 
     public void createGame() {

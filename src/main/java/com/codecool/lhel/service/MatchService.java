@@ -1,6 +1,7 @@
 package com.codecool.lhel.service;
 
 import com.codecool.lhel.domain.enums.Action;
+import com.codecool.lhel.domain.enums.ResultType;
 import com.codecool.lhel.domain.game.Game;
 import com.codecool.lhel.domain.game.Player;
 import com.codecool.lhel.domain.userRelated.Match;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 @Service
@@ -53,7 +56,7 @@ public class MatchService {
         return null;
     }
 
-    public Game getLastOpenGameBasedOnUser(UserEntity user) {
+    private Game getLastOpenGameBasedOnUser(UserEntity user) {
         Match match = matchRepository.findFirstByUsersContainsOrderByIdDesc(user);
         Game game = match.getDeserializedGame();
         if(game.isOpen())
@@ -61,13 +64,34 @@ public class MatchService {
         return null;
     }
 
-    public Match handleGameAction(UserEntity user, Game game, Action action){
+    public Match handleGameAction(UserEntity user, Action action){
+        Game game = getLastOpenGameBasedOnUser(user);
         Player currentPlayer = game.getPlayerOne().getUserId() == user.getId() ? game.getPlayerOne() : game.getPlayerTwo();
         game.handleGameFlow(currentPlayer, action);
         Match match = matchRepository.findOne(game.getMatchId());
         match.setDeserializedGame(game);
         matchRepository.save(match);
         return match;
+    }
+
+    public Match startNewRound(Game game){
+        game.newRound();
+        Match match = matchRepository.findOne(game.getMatchId());
+        match.setDeserializedGame(game);
+        matchRepository.save(match);
+        return match;
+    }
+
+    public Map<String, Game> gameJsonForUser(Match match, UserEntity user, Action action){
+        Map<String, Game> JSONMap = new HashMap<>();
+
+        Game game = match.getDeserializedGame();
+        if(game.getResult() == ResultType.PENDING || action == Action.FOLD){
+            Player enemyPlayer = game.getPlayerOne().getUserId() == user.getId() ? game.getPlayerTwo() : game.getPlayerOne();
+            enemyPlayer.setHand(null);
+        }
+        JSONMap.put("game", game);
+        return JSONMap;
     }
 
 }

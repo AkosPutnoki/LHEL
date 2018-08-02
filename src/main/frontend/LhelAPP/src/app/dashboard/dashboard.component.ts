@@ -13,7 +13,6 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 export class DashboardComponent implements OnInit {
 
   private loading: boolean = false;
-  private result: string = "PENDING";
   private resultMessage: string = "";
 
   constructor(private matchService: MatchService,
@@ -40,12 +39,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getGame() {
-    let game: game = this.matchService.game;
-    if(game !== null && this.result === "PENDING" && game.result !== "PENDING"){
-      this.result = game.result;
-      this.open(this.result)
-    }
-    return game;
+    return this.matchService.game;
   }
 
   getPlaceHolderArray() {
@@ -64,16 +58,19 @@ export class DashboardComponent implements OnInit {
     return this.matchService.isTurn;
   }
 
-  open(resultType: string) {
+  checkForResult(): boolean {
     let winner: string = "";
-    switch(resultType){
+    switch(this.getGame().result){
+      case "PENDING":{
+        return false;}
       case "PLAYERONEWON":{
-        winner = (this.getCurrentPlayer() === this.getGame().playerOne) ? "you" : "the enemy"; break;}
+        winner = (this.getCurrentPlayer() === this.getGame().playerOne) ? "you" : "your opponent"; break;}
       case "PLAYERTWOWON":{
-        winner = (this.getCurrentPlayer() === this.getGame().playerTwo) ? "you" : "the enemy"; break;}
+        winner = (this.getCurrentPlayer() === this.getGame().playerTwo) ? "you" : "your opponent"; break;}
       case "CHOP":{
         winner = "no one"; break;}
     }
-    this.resultMessage = `The round has ended and ${winner} won! <br> Are you ready for the next one?`;
+    this.resultMessage = `The round has ended and ${winner} won! <br> Next round incoming!`;
+    return true;
   }
 }

@@ -8,11 +8,8 @@
 
 <div id="game" *ngIf="getGame()">
   <div class="container">
-    <ngb-alert [dismissible]="false" *ngIf="resultMessage !== ''" class="row justify-content-center" >
+    <ngb-alert [dismissible]="false" *ngIf="checkForResult()" class="row justify-content-center" >
       <div class="col-md-auto" [innerHTML]="resultMessage"></div>
-      <div class="col-md-auto">
-        <button class="btn btn-success" (click)="">Yes!</button>
-      </div>
     </ngb-alert>
     <div class="row justify-content-center">
       <div class="col-md-auto">Your enemy's cards</div>

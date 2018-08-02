@@ -3,6 +3,7 @@ package com.codecool.lhel.controllerRest;
 import com.codecool.lhel.domain.enums.Action;
 import com.codecool.lhel.domain.enums.ResultType;
 import com.codecool.lhel.domain.game.Game;
+import com.codecool.lhel.domain.game.Player;
 import com.codecool.lhel.domain.userRelated.Match;
 import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.codecool.lhel.service.MatchService;
@@ -27,6 +28,8 @@ import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @RestController
 public class MatchController {
@@ -70,21 +73,33 @@ public class MatchController {
     @MessageMapping("/match/{matchId}")
     public void gameHandler(@Payload ActionJSON actionJSON, SimpMessageHeaderAccessor headerAccessor){
         UserEntity currentUser = userService.getUserById((Long) headerAccessor.getSessionAttributes().get("userId"));
-        Game currentGame = matchService.getLastOpenGameBasedOnUser(currentUser);
-        Match currentMatch = matchService.handleGameAction(currentUser, currentGame, actionJSON.action);
-        Map<String, Object> JSONMap = new HashMap<>();
+        Match currentMatch = matchService.handleGameAction(currentUser, actionJSON.action);
 
-        Game game = currentMatch.getDeserializedGame();
-        if(game.getResult() == ResultType.PENDING)
-            game.getPlayerTwo().setHand(null);
-        JSONMap.put("game", game);
-        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(0).getId(), JSONMap);
+        UserEntity userOne = currentMatch.getUsers().get(0);
+        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + userOne.getId(), matchService.gameJsonForUser(currentMatch, userOne, actionJSON.action));
 
-        game = currentMatch.getDeserializedGame();
-        if(game.getResult() == ResultType.PENDING)
-            game.getPlayerOne().setHand(null);
-        JSONMap.put("game", game);
-        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + currentMatch.getUsers().get(1).getId(), JSONMap);
+        UserEntity userTwo = currentMatch.getUsers().get(1);
+        simpMessagingTemplate.convertAndSend("/socket-response/match/"+ currentMatch.getId() + "/" + userTwo.getId(), matchService.gameJsonForUser(currentMatch, userTwo, actionJSON.action));
+
+        Game currentGame = currentMatch.getDeserializedGame();
+        if(currentGame.getResult() != ResultType.PENDING && currentGame.isOpen()){
+            new Timer().schedule(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            Match match = matchService.startNewRound(currentGame);
+
+                            UserEntity userOne = match.getUsers().get(0);
+                            simpMessagingTemplate.convertAndSend("/socket-response/match/"+ match.getId() + "/" + userOne.getId(), matchService.gameJsonForUser(match, userOne, actionJSON.action));
+
+                            UserEntity userTwo = match.getUsers().get(1);
+                            simpMessagingTemplate.convertAndSend("/socket-response/match/"+ match.getId() + "/" + userTwo.getId(), matchService.gameJsonForUser(match, userTwo, actionJSON.action));
+
+                        }
+                    },
+                    20000
+            );
+        }
     }
 
 
