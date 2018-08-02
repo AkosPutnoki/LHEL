@@ -12,5 +12,6 @@ export class game{
     public playerOne: player,
     public playerTwo: player,
     public result: string,
+    public validMoves: string[]
   ){}
 }

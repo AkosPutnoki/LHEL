@@ -12,7 +12,7 @@
       <div class="col-md-auto" [innerHTML]="resultMessage"></div>
     </ngb-alert>
     <div class="row justify-content-center">
-      <div class="col-md-auto">Your enemy's cards</div>
+      <div class="col-md-auto">Your opponent's cards</div>
     </div>
     <div class="row justify-content-center" id="enemyPlayer">
       <ng-container *ngIf="getEnemyPlayer().hand !== null; else placeholder">
@@ -26,7 +26,7 @@
         </div>
       </ng-template>
       <div class="col-md-auto">
-        <p>Enemy's stack</p>
+        <p>Opponent's stack</p>
         <p>{{getEnemyPlayer().stack}}</p>
       </div>
     </div>
@@ -53,10 +53,10 @@
         <p>Your stack</p>
         <p>{{getCurrentPlayer().stack}}</p>
       </div>
-      <div class="col-md-auto" *ngIf="getGame().result === 'PENDING'">
-        <button [disabled]="!isTurn()" class="btn btn-info" (click)="handlePlayerAction('CHECK')">Check</button>
-        <button [disabled]="!isTurn()" class="btn btn-basic" (click)="handlePlayerAction('CALL')">Call</button>
-        <button [disabled]="!isTurn()" class="btn btn-success" (click)="handlePlayerAction('RAISE')">Raise</button>
+      <div class="col-md-auto buttons" *ngIf="getGame().result === 'PENDING'">
+        <button [disabled]="!isTurn() || !checkForValidMove('CHECK')" class="btn btn-info" (click)="handlePlayerAction('CHECK')">Check</button>
+        <button [disabled]="!isTurn() || !checkForValidMove('CALL')" class="btn btn-basic" (click)="handlePlayerAction('CALL')">Call</button>
+        <button [disabled]="!isTurn() || !checkForValidMove('RAISE')" class="btn btn-success" (click)="handlePlayerAction('RAISE')">Raise</button>
         <button [disabled]="!isTurn()" class="btn btn-danger" (click)="handlePlayerAction('FOLD')">Fold</button>
       </div>
     </div>

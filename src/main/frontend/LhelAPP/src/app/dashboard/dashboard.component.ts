@@ -73,4 +73,8 @@ export class DashboardComponent implements OnInit {
     this.resultMessage = `The round has ended and ${winner} won! <br> Next round incoming!`;
     return true;
   }
+
+  checkForValidMove(move: string): boolean{
+    return this.getGame().validMoves.some(x => x === move);
+  }
 }

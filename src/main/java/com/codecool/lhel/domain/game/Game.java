@@ -7,6 +7,7 @@ import com.codecool.lhel.domain.enums.Stage;
 import com.codecool.lhel.domain.exceptions.BadMoveException;
 import com.codecool.lhel.domain.userRelated.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import sun.util.resources.cldr.lag.CalendarData_lag_TZ;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,6 +33,7 @@ public class Game implements Serializable {
     @JsonIgnore
     private boolean firstActOnStage;
     private ResultType result;
+    private List<Action> validMoves;
 
     public Game(UserEntity userOne, UserEntity userTwo, long matchId) {
         this.playerOne = new Player(userOne);
@@ -93,6 +95,14 @@ public class Game implements Serializable {
 
     public void setPlayerTwo(Player playerTwo) {
         this.playerTwo = playerTwo;
+    }
+
+    public List<Action> getValidMoves() {
+        return validMoves;
+    }
+
+    public void setValidMoves(List<Action> validMoves) {
+        this.validMoves = validMoves;
     }
 
     private void changeTurn(){
@@ -229,6 +239,7 @@ public class Game implements Serializable {
                     } else {
                         facingCallOrCheckLogic(player, action, BetSize.BIG_BET, Stage.SHOWDOWN);
                     }
+                    break;
                 case SHOWDOWN:
                     compareHands();
             }
@@ -243,6 +254,11 @@ public class Game implements Serializable {
             throw new BadMoveException("Can't check in small blind");
         } else if (action == Action.CALL){
             handlePlayerAction(player, action, BetSize.NO_BET);
+            validMoves = new ArrayList<Action>(){{
+                add(Action.CHECK);
+                add(Action.RAISE);
+                add(Action.FOLD);
+            }};
             if (stage != Stage.PREFLOP || !firstActOnStage){
                 stage = toStage;
                 raiseCounter = 0;
@@ -250,12 +266,21 @@ public class Game implements Serializable {
                 firstActOnStage = true;
                 return;
             }
+
         } else if (action == Action.RAISE){
             if (raiseCounter < 4){
                 handlePlayerAction(player, action, betSize);
                 raiseCounter++;
             } else {
                 throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
+            }
+            validMoves = new ArrayList<Action>(){{
+                add(Action.CALL);
+                add(Action.FOLD);
+                add(Action.RAISE);
+            }};
+            if(raiseCounter == 3){
+                validMoves.remove(Action.RAISE);
             }
         }
         firstActOnStage = false;
@@ -271,8 +296,21 @@ public class Game implements Serializable {
             } else {
                 throw new BadMoveException("Cant raise after " + raiseCounter + " number of raises");
             }
+            validMoves = new ArrayList<Action>(){{
+                add(Action.CALL);
+                add(Action.FOLD);
+                add(Action.RAISE);
+            }};
+            if(raiseCounter == 3){
+                validMoves.remove(Action.RAISE);
+            }
         } else if (action == Action.CHECK){
             handlePlayerAction(player, action, BetSize.NO_BET);
+            validMoves = new ArrayList<Action>(){{
+                add(Action.CHECK);
+                add(Action.RAISE);
+                add(Action.FOLD);
+            }};
             if(!firstActOnStage) {
                 stage = toStage;
                 raiseCounter = 0;
@@ -333,6 +371,11 @@ public class Game implements Serializable {
         dealHands();
         firstActOnStage = true;
         raiseCounter = 0;
+        validMoves = new ArrayList<Action>(){{
+           add(Action.CALL);
+           add(Action.RAISE);
+           add(Action.FOLD);
+        }};
     }
 
     public ResultType getResult() {
