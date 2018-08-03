@@ -240,9 +240,10 @@ public class Game implements Serializable {
                         facingCallOrCheckLogic(player, action, BetSize.BIG_BET, Stage.SHOWDOWN);
                     }
                     break;
-                case SHOWDOWN:
-                    compareHands();
             }
+
+            if(stage == Stage.SHOWDOWN)
+                compareHands();
 
             dealStreet();
             changeTurn();
